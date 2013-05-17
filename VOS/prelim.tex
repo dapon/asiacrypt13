@@ -1,0 +1,645 @@
+\section{Preliminaries}
+\label{sec:prelim}
+
+
+
+
+\subsection{The Random Access Machine (RAM) Model}
+\label{sec:def-RAMs}
+
+\paragraph{RAMs and RAM programs.}
+We are interested in modeling computation on a \emph{von~Neumann architecture}.
+Here, we have a CPU with random access to some memory~$D$ that stores $n$ words
+each of length~$\ell$.
+We let $\nextins$ denote the CPU's next-instruction function, which takes as input
+some small, local state $\st$ along with the last-read word of memory, and outputs
+a write address
+$\waddr_t$, a read address $\raddr_t$,
+and a value $\data_t$ to be written to~$D[\waddr_t]$.
+A RAM \emph{program} $f$ is a sequence of instructions (i.e., executable code)
+which is stored in some pre-allocated portion of~$D$.
+Other data (e.g., a database, a graph)
+may be stored in~$D$ as well before execution begins.
+With $D$ initialized as described,
+we may then run $f$ on some input~$x$ (also called a \emph{query})
+by setting\footnote{This assumes $x$ is ``short.''
+If $x$ is ``large,'' we can store it in $D$;
+see Section~\ref{sec:VP}.} $\st_0=x$ and then running
+\[
+\begin{array}{l}
+{\sf fetched}_0 = \perp\\
+\text{For } t = 1, 2, \ldots:\\
+\qquad \left(\data_t, \waddr_{t}, \raddr_{t}, \st_{t}\right) :=
+\nextins\left({\sf fetched}_{t-1}, \st_{t-1}\right)\\
+\qquad {\sf fetched}_t := D[\raddr_{t}]\\
+\qquad D[\waddr_t] := \data_t
+\end{array}
+\]
+\jnote{Do we care about the order of read/write in case $\raddr_t=\waddr_t$? Or do we
+assume that never happens?}
+We assume that any program $f$ we consider has associated with it a time bound $\tau$
+such that the program runs for exactly $\tau$ steps for all queries.
+Thus, the execution above ends when $t=\tau$, at which point (by convention)
+the final output is~$\data_\tau$.
+
+
+%A RAM program $f$ is defined to be a RAM description
+%along with an initial {\it configuration} $(D, \st)$, where $D[1..n]$
+%is the initial memory array (containing code and data), and $\st$ denotes
+%the initial CPU states. \jnote{Isn't the initial state always the same?}
+
+\ignore{
+We later use the notation ${\sf RAM}: = (D, \st, \nextins, \params)$
+to denote a RAM with its initial configuration $D$ and $\st$,
+the next instruction circuit $\nextins$, and $\params = (n, \ell, |st|, |x|, |\res|)$,
+where $n$ is the size of the memory array, $\ell$ is the bit-length
+of each memory word, 
+}
+
+\paragraph{Repeated queries.}
+We are interested in the case where a RAM program is repeatedly executed a multiple
+queries, with the contents of $D$ possibly being updated as the queries are answered.
+(E.g., some inputs might represent an update to the underlying database itself, or
+might update the data during the course of computing the output.)
+If $D$ denotes the initial contents of the memory (including $f$ itself, which we
+assume is not being modified), then we write
+$\res_m \leftarrow f_D(x_1, x_2, \ldots, x_m)$
+to denote that the result of answering the $m$th query in the sequence $x_1, \ldots, x_m$
+is~$\res_m$.
+\elaine{double-check paper to make sure notation is consistent.}
+
+%\jnote{We may just want to set $\ell=\ell'=O(\log n)$ for
+%concreteness and simplicity. Do we ever need $|\inp|$ bigger than $O(\log n)$?}
+
+
+\paragraph{Assumptions.}
+If $\lambda$ denotes the security parameter,
+we assume that the number of memory words $n = \poly(\lambda)$,
+the total number of queries $Q = \poly(\lambda)$, and the program executes for
+$\tau = \poly(\lambda)$ steps.
+We also assume that the bit-length of each memory word 
+and the CPU states $\ell = O(\log \lambda), |\st| = O(\log \lambda)$.
+Since the $\nextins$ function takes in $O(\log \lambda)$ bits and
+outputs $O(\log \lambda)$ bits, the $\nextins$ function can be expressed with  
+a size-$\tilde{O}(\lambda)$ circuit.
+\elaine{do we need to assume the size of the $\nextins$ circuit?}
+%We assume that the $\nextins$ circuit computes
+%in $\poly \log \lambda$ time.
+%and the bit length of each input and output
+%$|x| = \Theta(\log n)$, and $|\res| = \Theta(\log n)$.
+%In practice, if bigger inputs and outputs
+%are required, each query can easily be broken down into multiple
+%``smaller'' queries where inputs and outputs are of size $\Theta(\log n)$.
+%\elaine{actually may need those to be Theta(lambda) or something for
+%the cost analysis}
+
+
+%In every time step:
+
+%\paragraph{RAM program.} \jnote{This needs to be cleaned up a bit.}
+%We use the same formal definition of a RAM program as in
+%Gordon \etal~\cite{katzram}.
+%Let $n$ denote the memory size.
+%We consider a RAM program $f$ that takes in a (small) input $\inp$
+%of fixed bit length $\ell'$, and works on a memory
+%array $D[1..n]$ of size~$n$, where each word
+%has bit length $\ell$. \jnote{We may just want to set $\ell=\ell'=O(\log n)$ for
+%concreteness and simplicity. Do we ever need $|\inp|$ bigger than $O(\log n)$?}
+\ignore{
+The memory array $D$ is accessed using
+a sequence of read or write instructions.
+Any such instruction
+$I \in \left(\{\rd, \wt, \mathsf{stop}\} \times \N \times \{0,1\}^*\right)$
+takes the form $(\wt, a, v)$ (i.e., write
+the value $v$ to address $a$);
+or $(\rd, a, \bot)$ (i.e., read the data stored at address $a$).
+We also assume a designated $\mathsf{stop}$ instruction of the form
+$(\mathsf{stop}, \res)$  that indicates the termination of the RAM program
+with output $\res$. \jnote{We need some notation for executing RAM program $\Pi$ on array $D$
+and input~$x$.}
+
+Formally, a RAM program is defined by a
+``next instruction'' function $\nextins$ which, given the current CPU state,
+and a value $v$ which will always be equal to the last value read from memory,
+outputs the next instruction and an updated state.
+Assume $D$ has $n$ entries, each $\ell$ bits long, then
+we can view execution of a RAM program on inputs $D, \inp$ as follows:
+
+Let $\st := (1^{\log n}, 1^\ell, \mathsf{start}, \inp)$ and $v = 0^\ell$.
+Until termination do:
+\begin{enumerate}
+\item
+Compute $(I, \st') \leftarrow \nextins(\st, v)$. Set $\st = \st'$.
+\item
+If $I = (\mathsf{stop}, \res)$, then terminate with output $\res$.
+\item
+If $I = (\wt, a, v')$, then set $D[a] = v'$.
+\item
+If $I = (\rd, a, \bot)$, then set $v = D[a]$.
+\end{enumerate}
+
+We require that the size of $\st$, and the space needed to compute $\nextins$, is polynomial in
+$\log n$, $\ell$, and $|\inp|$.
+\elaine{think about this assumption}
+We say that a RAM program $f$ completes in time $\tau$, if
+the number of instructions issued in the above execution is exactly $\tau$.
+
+
+We stress that the memory contents of $D$ may change during the execution of the RAM program.
+We use the notation $(D', \res) \leftarrow f(D, \inp)$
+to denote the outcome of executing $f$ over data array $D$, and input $\inp$. Specifically,
+$f$ outputs an answer $\res$, and may make modifications to the data array $D$, resulting
+in $D'$.
+Given initial memory array $D_0$ and queries $\inp_1, \inp_2, \ldots,
+\inp_m$, we recursively define $(D_i, \res_i) = f(D_{i-1}, \inp_i)$ and call $\res_i$ the
+\textit{correct answer}
+for the $i$th query. We also write $(D_i, \res_i) = f(D_0, \inp_1, \ldots, \inp_i)$. \jnote{Clean this up.}
+}
+
+
+
+
+\subsection{Memory Checking}
+\label{app:MC}
+We recast memory checking~\cite{blum-memories-94} in a form better suited for our purposes,
+however it is clear that our definition is equivalent to that used in prior work.
+We use the same notation as in Section~\ref{sec:def-RAMs}. If $D$ is a memory array,
+then the ``instruction'' $I=(\data, \waddr, \raddr)$
+sets $D[\waddr] = \data$ and
+returns
+${\sf fetched} = D[\raddr]$.
+If a sequence of instructions $I_1=(\data_1, \waddr_1, \raddr_1), \ldots,
+I_m = (\data_m, \waddr_m, \raddr_m)$ is executed, the correct answer to the final
+instruction (i.e., the final value~${\sf fetched}_m$) is defined in the obvious way:
+if $\raddr_m \not \in \{\waddr_1, \ldots, \waddr_{m-1}\}$ then ${\sf fetched}_m = D[\raddr_m]$,
+i.e., the contents of the original memory at location~$\raddr_m$. Otherwise, let
+$t<m$ be maximal such that $\raddr_m = \waddr_t$; then ${\sf fetched}_m = \data_t$.
+
+\begin{definition}
+A {\sf memory-checking scheme} consists of algorithms
+$(\setup, \prove, \vrfy)$ such that:
+\begin{itemize}
+\item $\setup$ takes as input a security parameter~$1^\lambda$ and
+an array $D$, and outputs a transformed array $\tilde D$ along with
+a digest~$d$.
+\item $\prove$ takes as input $\tilde D$ and an instruction $I=(\data, \waddr, \raddr)$.
+It outputs an updated array $\tilde D$, a value ${\sf fetched}$, and a proof~$\pi$.
+% where $I$ either takes
+%the form $I = ({\sf read}, a)$ or
+%$I=({\sf write}, a, v)$. Then:
+%\begin{itemize}
+%\item If $I$ is a read instruction, it outputs a value $v$ and a proof~$\pi$.
+%\item If $I$ is a write instruction, it outputs an updated array $\tilde D$, a (new) digest~$d$,
+%and a proof~$\pi$.
+\item $\vrfy$ takes as input a digest~$d$, an instruction $I=(\data, \waddr, \raddr)$,
+a value ${\sf fetched}$, and a proof~$\pi$. It outputs
+a bit~$b$ and an updated digest~$d$.
+\end{itemize}
+The correctness requirement is that for any initial array~$D$,
+and any (adaptively chosen) sequence of instructions $I_1, \ldots, I_m$, if we run
+\[(\tilde D_0, d_0) \leftarrow \setup(1^\lambda, D); \;\; \forall \, i:
+(\tilde D_i, {\sf fetched}_i, \pi_i) \leftarrow \prove(\tilde{D}_{i-1}, I_i);
+(b_i, d_i) \leftarrow \vrfy(d_{i-1}, I_i, {\sf fetched}_i, \pi_i),\]
+then $b_1 = \cdots = b_m = 1$ and ${\sf fetched}_1, \ldots, {\sf fetched}_m$ are all
+correct (as defined above).
+
+Security requires that for all poly-time $\A$, any initial array $D$, and any
+(adaptively chosen) sequence of instructions $I_1, \ldots, I_m$, if we run
+\[(\tilde D_0, d_0) \leftarrow \setup(1^\lambda, D); \;\;\; \forall \, i:
+(\tilde D_i, {\sf fetched}_i, \pi_i) \leftarrow \A(\tilde{D}_{i-1}, I_i);
+(b_i, d_i) \leftarrow \vrfy(d_{i-1}, I_i, {\sf fetched}_i, \pi_i),\]
+then the probability that $b_1 = \cdots = b_m = 1$ but ${\sf fetched}_m$ is not the correct answer
+is negligible.
+
+If the above holds even when $\A$ is given $d_0$, then we say the scheme is {\sf publicly verifiable}.
+\end{definition}
+
+
+
+
+\ignore{
+Our verifiable-only VC-RAM construction will rely on standard,
+publicly verifiable memory checking -- also referred to as the reliable
+memory model in memory checking literature
+\elaine{not sure what the term is, double check, and put in citation}, in
+the sense that the client state (i.e., digest) need not
+be kept secret from the server.
+While previous works have given formal definitions for memory checking,
+we observe that memory checking
+is a special case of VC-RAM, where the RAM program is simple
+memory read or memory write.
+Therefore, we do not specially repeat the security definitions
+for memory checking, but simply define it as a special case of VC-RAM.
+\jnote{I'm not sure how useful it is to define memory checking as a special case of VC-RAM.
+The definition is self-contained enough that we could just give it.} \jnote{We used to have
+a short, self-contained definition; not sure what happened to it.}
+
+\begin{definition}[Memory checking]
+A memory checking scheme is a special case of VC-RAM, where the
+RAM program either fetches memory location $a$ upon input
+$(\rd, a)$, or
+writes data $v$ to memory location~$a$ upon input
+$(\wt, a, v)$.
+For secretly verifiable memory checking, its security definition
+follows from
+Definition~\ref{defn:verifiable} -- note that memory checking
+requires only verifiability but not privacy.
+For publicly verifiable memory checking, the security definition
+is similar to
+Definition~\ref{defn:verifiable}, with the exception that the adversary
+is also given the updated client state (denoted $\cst$) in lines marked [*] in
+the security game.
+%rivacy is not a requirement of memory checking,
+\end{definition}
+}
+
+\subsection{Succinct Non-Interactive Arguments of Knowledge (SNARKs)}
+\label{app:SNARKs}
+\begin{definition}[SNARK]
+%\jnote{To be a SNARG, the definition has to say something about the verification time relative
+%to checking membership in~$R_L$.}
+Algorithms $(\algKeygen, \P, \V, \Ex)$
+give a {\sf succinct non-interactive argument of knowledge (SNARK)}
+for an NP language $L$
+with corresponding NP relation \jnote{Properly define.} $R_L$~if:
+%\jnote{Use $\pi$ for proof instead of~$\sigma$?}
+\begin{description}
+\item
+\textbf{Completeness:}
+For all $x \in L$ with witness $w \in R_L(x)$:
+\[
+\Pr\left[\V(\sk, x, \pi) = 0 \ \bigg|
+\begin{array}{c}
+(\pk, \sk) \leftarrow \algKeygen(1^\lambda), \\
+\pi\leftarrow \P(\pk, x, w)
+\end{array}
+\right] = \mathsf{negl}(\lambda)
+\]
+\item
+\textbf{Adaptive soundness:}
+For any probabilistic polynomial-time algorithm $\algA$,
+\[
+\Pr\left[
+\begin{array}{c}
+\V(\sk, x, \pi) = 1  \\
+\wedge \ (x \notin L)
+\end{array}
+\ \bigg|
+\begin{array}{c}
+(\pk, \sk) \leftarrow \algKeygen(1^\lambda), \\
+(x, \pi) \leftarrow \algA(1^\lambda, \pk)
+\end{array}
+\right] = \mathsf{negl}(\lambda)
+\]
+
+\item
+\textbf{Succinctness:}
+The length of a proof is given by
+$|\pi| = \poly(\lambda) \poly \log (|x|+|w|)$.
+\item
+\textbf{Extractability.}
+For any poly-size
+prover $\P^*$, there exists an extractor $\Ex^*$
+such that for any statement $x$, 
+auxiliary information 
+$\mu$, the following holds:
+\[
+\Pr\left[
+\begin{array}{l}
+(\pk, \sk) \leftarrow \algKeygen(1^\lambda)\\
+\pi \leftarrow \P^*(\pk, x, \mu)\\
+\V(\sk, x, \pi) = 1
+\end{array}
+\wedge
+\begin{array}{l}
+w \leftarrow \Ex^*(\pk, \sk, x, \pi) \\
+w \notin R_L
+\end{array}
+\right] = {\sf negl}(\lambda)
+\]
+%For any statement $x$, %there exists an extractor algorithm $\Ex_x$,
+%%such that
+%for any $\pi \leftarrow \P(\pk, x, w)$,
+%$w \leftarrow \Ex(\sk, x, \pi)$.
+\ignore{
+\item
+\textbf{Zero-knowledge}
+There exists a simulator $\SIM$,
+such that for any polynomial-time adversary $\algA$,
+it holds that
+\[
+\begin{array}{l}
+\Pr[\pk \leftarrow \algKeygen(1^\lambda);
+(x, w) \leftarrow \algA(\pk);  \pi \leftarrow \P(\pk, x, w):
+(x, w) \in R \text{ and } \algA(\pi) = 1] \simeq\\
+\Pr[(\pk, \state) \leftarrow \SIM(1^\lambda);
+(x, w) \leftarrow \algA(\pk);  \pi \leftarrow \SIM(\pk, x, \state):
+(x, w) \in R \text{ and } \algA(\pi) = 1]
+\end{array}
+\]
+}
+\end{description}
+\end{definition}
+
+%\paragraph{Public vs. secret verifiability.}
+We say that a SNARK is {\it publicly
+verifiable} if $\sk = \pk$.
+In this case, proofs can be verified by anyone with $\pk$.
+Otherwise, we call it a {\it secretly-verifiable} SNARK, in which
+case only the party with $\sk$ can verify.
+
+\begin{lemma}[Efficient SNARKs~\cite{spanprogram}]
+Assume that the $q$-PDH assumption
+and the $q$-PKE assumption
+hold in an appropriately chosen bilinear group.
+There exists a publicly verifiable SNARK
+for Circuit-SAT where circuits have size at most~$s$,
+such that
+$\algKeygen$ takes $\tilde{O}(s) \cdot O(\lambda)$ time,
+prover computation takes $\tilde{O}(s) \cdot O(\lambda)$ time,
+verifier computation is
+$O(|x| \lambda)$, the size of $\pk$ is
+$O(s\lambda)$,
+and proof size is~$O(\lambda)$.
+Furthermore, assuming the $q$-PDH, $d$-PKE and
+$q$-PKEQ assumptions,
+there is a secretly verifiable SNARK
+with the same asymptotic efficiency.
+\end{lemma}
+
+
+%\begin{proof}(of Theorem~\ref{thm:vc})
+%Suppose the client starts with digest $d_i$, and the server starts
+%with data $D_i$, digest $d_i$, and auxiliary authentication information $\aux_i$.
+%\end{proof}
+
+
+
+
+
+\subsection{Verifiable RAM Computation}
+\begin{definition}[Verifiable RAM Computation]
+A Verifiable RAM Computation (VC-RAM) scheme
+consists of the following algorithms:
+\label{defn:vcram}
+\label{defn:correct}
+\end{definition}
+
+%In particular, the client's state is updated
+%after running each client-side algorithm, including $\algSetup$,
+%$\algProbgen$, and $\algVerify$.
+\begin{description}
+\ignore{
+\item
+$(\pk, \sk) \leftarrow \algKeygen(1^\lambda, 1^n, 1^\ell, 1^{\ell'})$:
+The key-generation algorithm takes as input a security parameter $\lambda$,
+size of memory $n$, bit length of each memory word $\ell$,
+and bit length of input $\ell'$,
+and outputs public key $\pk$ and secret key~$\sk$.
+\jnote{What is the point of separating KeyGen and Setup?}
+}
+\item
+%$(\overline{D}_0, \cst) \leftarrow \algSetup(\pk, \sk, D_0)$:
+$(\sst, \cst) \leftarrow \algSetup(1^\lambda, D, \params)$:
+The $\algSetup$ algorithm
+\ignore{
+\footnote{
+One can alternatively split the the $\algSetup$ algorithm
+into a $(\pk, \sk) \leftarrow \algInit(1^\lambda, 1^n, 1^\ell, 1^{\ell'})$
+algorithm which outputs a public key $\pk$ and secret key $\sk$;
+and a $(\sst, \cst) \leftarrow \algSetup(\pk, \sk, D)$
+algorithm. In the security definition (Definition~\ref{defn:indist}),
+the adversary would then be able to choose the initial memory $D$
+dependent on the public key.
+Our construction can also be proven secure under this slightly stronger model.
+However, in practice, the client can always choose $\pk$ on the fly
+whenever the initial $D$ is outsourced to the server.
+We therefore go with simpler notations.
+}
+}
+is a one-time setup algorithm run by the client.
+$\algSetup$ takes in %the description of the RAM program $f$,
+the security parameter $1^\lambda$,
+initial memory array $D$, %(we assume that initial CPU states are always zeroed out),
+%initial memory array $D[1..n]$
+and parameters $\params: = (n, \ell, |\st|)$ of the RAM;
+%$1^n, 1^\ell, 1^{\ell'}$, representing
+%the length of the memory array,
+%the bit length of each memory word,
+%and the bit length of the input respectively.
+and outputs
+%the encoded memory content $\overline{D}_0$,
+%a public key $\pk$,
+server initial state $\sst$,
+and client state $\cst$.
+The client hands $\sst$ to the server,
+and retains state $\cst$ locally.
+%The client hands $\pk$ and $\overline{D}_0$ to the server.
+%In a one-time setup phase, the client encodes the initial memory
+%array $D_0[1..n]$, containing a description of the RAM program $f$ (i.e., code)
+%as well as initial data, and outsources
+%the resulting
+%$\overline{D}_0$ to the server.
+%The client retains state $\cst$ locally.
+%In general, we can assume that the client state
+%$\cst$ now contains $\pk$ and $\sk$, so we do not
+%need to repeat $\pk$ and $\sk$ in the algorithms below.
+%\elaine{whether this state can be made public decides whether
+%this scheme is publicly or privately verifiable}
+%The client and the server both run the $\algSetup$ algorithm,
+%obtaining a concise digest $d_0$ of the memory contents including $f$ and $D$,
+%as well as auxiliary information $\aux_0$.
+%The client keeps the digest $d_0$. The server will later use $\aux_0$ to efficiently
+%compute the updated digest when the memory contents get updated during the RAM computation.
+\item
+$(\overline{\inp}, \cst) \leftarrow \algPrepare(\inp, \cst)$:
+Given input $\inp$, prepare the input and obtain the encoding
+$\overline{\inp}$.
+The client state $\cst$ is updated\footnote{
+We use the notation $({\it output}, \state) \leftarrow {\sf Alg}({\it input}, \state)$
+to denote that a party runs algorithm {\sf Alg}, which
+results in updating its local state.
+}.
+\item
+%$(\overline{\res}_i, \overline{D}_i)  \leftarrow \algCompute(\pk, \overline{x}_i, \overline{D}_{i-1})$:
+$(\overline{\res}, \sst)  \leftarrow \algCompute(\overline{\inp}, \sst)$:
+Given %public key $\pk$,
+%encoded memory array $\overline{D}_{i-1}$,
+current server state $\sst$
+and encoded input $\overline{\inp}$, the server
+computes an encoded answer $\overline{\res}$, which typically embeds the output
+as well as a proof of correct computation.
+The server also updates its state $\sst$ as a result of $\algCompute$.
+\jnote{Be consistent whether $D$ or $\inp$ comes first.}
+\item
+$(\res, b, \cst) \leftarrow \algVerify(\overline{\res}, \cst)$:
+Outputs the decoded answer $\res$, a bit $b \in \{0, 1\}$ indicating
+whether the answer is accepted, and updates the client local state
+$\cst$.
+%\item
+%$\{0, 1\} \leftarrow \algCheck(\pk, d, D)$:
+%Check if $d$ is a correct digest of $D$, and output $0$ or $1$.
+\end{description}
+%\label{defn:vcram}
+
+Correctness is defined in the obvious way. We require that for any
+$\params$,
+%$n, \ell, \ell' = \text{poly}(\lambda)$,
+for any initial memory array $D \in \{0, 1\}^{\ell n}$,
+for any query sequence $\inp_1, \inp_2, \ldots, \inp_m$ where
+$m = \text{poly}(\lambda)$ \jnote{Should $\ell, \ell = O(\log \lambda)?$},
+\[
+\Pr\left[
+\exists i:
+\begin{array}{l}
+(\res_i \neq f(D, \inp_1, \inp_2, \ldots, \inp_i))\\
+\vee (b_i = 0)
+\end{array}
+\left|
+\begin{array}{l}
+%(\pk, \sk) \leftarrow \algKeygen(1^\lambda, 1^n, 1^\ell, 1^{\ell'})\\
+(\sst_0, \cst)\leftarrow \algSetup(1^\lambda, D, \params)\\
+%(\overline{D}_0, \cst)\leftarrow \algSetup(\pk, \sk, D_0)\\
+\forall i \in \{1, 2, \ldots, m\}:\\
+\quad \quad (\overline{\inp}_i, \cst) \leftarrow \algProbgen(\inp_i, \cst)\\
+\quad \quad (\overline{\res}_i, \sst_i) \leftarrow
+\algCompute(\overline{\inp}_i, \sst_{i-1})\\
+\quad \quad (\res_i, b_i, \cst) \leftarrow \algVerify(\overline{\res}_i, \cst)
+\end{array}
+\right.
+\right]
+= \mathsf{negl}(\lambda)
+\]
+
+%\aish{I have defined Probgen and Verify to take secret key as input. If we want public verifiability or anyone to be able to delegate, we can consider definitions (defined in the natural way) with pk also. }
+%\elaine{discuss public vs.\ secret key setting. the non-private setting,
+%we can do public key with public-key SNARGs.}
+%\paragraph{Public vs. secret key setting.}
+%We say that a VC-RAM scheme is in the public key
+%setting if the client state $\cst$ may be revealed to the server.
+%We say that a VC-RAM scheme is in the secret key
+%setting, if the client state $\cst$ must be kept secret from the server.
+
+\ignore{
+\paragraph{Correctness.}
+[definition trivial]
+
+\paragraph{Soundness.}
+
+\paragraph{Privacy.}
+input/output privacy: run setup and give public key to adversary.
+adversary can choose client inputs for Setup
+and Probgen.
+but can also query a version of those algorithms where
+the client chooses those inputs.
+adversary can selectively ask to see
+some outputs for Verify.
+Define whatever information adversary learns in this way.
+
+Privacy: there exists
+a simulator (simsetup, simprobgen, simverify algorithms sharing state)
+which has oracle access to the answer of each query.
+%a simulator that can
+%simulate the query answers knowing only
+%[essentially what the adversary knows],
+%and the [secret key], [how about secret state]?
+%\elaine{need to make more precise here. the problem is that
+%what the simulator knows is determined dynamically online}
+such that the adversary does not know
+whether it is talking to a simulator or
+in real-world.
+}
+
+\paragraph{Server efficiency and client efficiency.}
+We say that a VC-RAM scheme is {\it verifier efficient}, if
+the client's online computation per query (including
+the cost of the $\algProbgen$ and $\algVerify$ algorithms)
+is asymptotically smaller than the run-time of the
+RAM program.
+In our constructions, the client's online computation
+is independent
+of the time $\tau$ of running the RAM program and the memory size $n$.
+We say that a VC-RAM scheme is {\it server efficient},
+if the server's online computation per query is sublinear in the
+size of $D$ for queries that take sublinear time to execute
+in the RAM model.
+%We say that a VC-RAM scheme is efficient, if the client's online
+%computation cost
+%\end{definition}
+
+\paragraph{}
+
+We now define the security of VC-RAM.
+We give two security definitions:
+1) what is a {\it verifiable} VC-RAM scheme; and 2) what is
+a {\it verifiable} and {\it private} VC-RAM scheme.
+In both definitions, we
+consider an honest client, and a {\it malicious} server.
+
+
+
+\subsection{Security Definitions: Verifiability of VC-RAM}
+\label{sec:defn-verifiability}
+%\jnote{Why is this here? Again, does this handle the selective abort issue or not?}
+
+\begin{definition}[Verifiable-only VC-RAM]
+We say that a VC-RAM scheme is verifiable, if
+for any polynomial time (stateful) adversary $\algA$ the following holds.
+\label{defn:verifiable}
+\end{definition}
+\[
+\Pr\left[
+\begin{array}{l}
+\exists i: (b_i = 1) \wedge   \\
+(\res_i \neq f(D, \inp_1, \ldots, \inp_i) )
+\end{array}
+\left|
+\begin{array}{l}
+%(\pk, \sk) \leftarrow \algKeygen(1^\lambda, 1^n, 1^\ell, 1^{\ell'}) \\
+%D_0 \leftarrow \algA(\pk, 1^n, 1^\ell, 1^{\ell'})\\
+D \leftarrow \algA(\params)\\
+(\sst, \cst) \leftarrow \algSetup(1^\lambda, D, \params) \\
+\inp_1 \leftarrow \algA(\sst) \hfill [*]\\
+\forall i \in  \{1, 2, \ldots, m\}: \\
+%\quad (x_i, \mu) \leftarrow \algA(\mu)\\
+\quad \quad (\overline{\inp}_i, \cst) \leftarrow \algProbgen(\inp_i, \cst)\\
+\quad \quad \overline{\res}_i \leftarrow \algA(\overline{\inp}_i) \hfill [*]\\
+\quad \quad (\res_i, b_i, \cst) \leftarrow \algVerify(\overline{\res}_i, \cst) \\
+\quad \quad \inp_{i+1} \leftarrow \algA(\res_i, b_i) \hfill [*]
+\end{array}
+\right.
+\right]
+= \mathsf{negl}(\lambda)
+\]
+
+\paragraph{Public vs.\ secret verifiability, two-party vs.\ three-party settings.}
+In the above, we have defined a secretly verifiable VC-RAM, i.e.,
+the client state $\cst$ needs to be kept secret from the server.
+
+We say that a VC-RAM scheme is {\it publicly verifiable} if the client
+state $\cst$ necessary for the verification need not be kept secret from
+the server.
+More formally, in lines marked [*] in the above security definition,
+we supply the latest client state $\cst$ to the adversary $\algA$ as well.
+
+%\paragraph{Remark.}
+Public verifiability is also referred to the {\it three-party} setting
+in the authenticated data structure literature.
+Imagine the scenario
+%Basically, imagine
+where a trusted data source (i.e., client)
+distributes a signed copy of the latest client state $\cst$ (often
+referred to as a digest in the authenticated data structure literature).
+We can easily augment the definition to distinguish between two types of queries --
+{\it read-only} queries and {\it update} queries.
+Update queries (e.g., insertions and deletions to a database)
+should only be made by the trusted data source,
+and would write to memory as a result of the RAM execution.
+By contrast, a read-only query (e.g., performing a binary or keyword search)
+does not update the memory during the RAM execution,
+and anyone with the latest client state (i.e., digest) $\cst$ should be able to issue read-only queries and
+verify the result.
+More formally, the $\algProbgen$ and $\algVerify$ algorithms for read-only queries
+should not cause updates to the client state (i.e., digest) $\cst$.
+How to enforce such access control is an orthogonal issue, and outside the scope of this paper.
+%then anyone with $\cst$ would be able to verify queries.

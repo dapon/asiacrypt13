@@ -1,0 +1,200 @@
+\newcommand{\ignore}[1]{}
+
+\newcommand{\etal}{et al.\xspace}
+
+\theoremstyle{plain}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{protocol}[thm]{Protocol}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{remark}{Remark}
+
+\newcommand{\G}{\ensuremath{\mathbb{G}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+
+\newcommand{\compind}{\ensuremath{\stackrel{c}{\approx}}}
+
+\newcommand{\RLWE}{{\sf RLWE}}
+\newcommand{\SVP}{{\sf SVP}}
+
+\newcommand{\sFE}{{\sf sFE}}
+\newcommand{\PE}{{\sf PE}}
+\newcommand{\pp}{{\it pp}}
+\newcommand{\msk}{{\sf msk}}
+%\newcommand{\algTokenGen}{{\sf TokenGen}}
+
+\newcommand{\regev}{{\sf Regev}}
+\newcommand{\regevpriv}{{\sf Regev.PrivateKeyGen}}
+\newcommand{\regevpub}{{\sf Regev.PublicKeyGen}}
+\newcommand{\regevenc}{{\sf Regev.Enc}}
+\newcommand{\regevdec}{{\sf Regev.Dec}}
+
+\newcommand{\enc}{{\sf Enc}}
+\newcommand{\dec}{{\sf Dec}}
+
+\newcommand{\eps}{\ensuremath{\epsilon}}
+\newcommand\defeq{\ensuremath{\stackrel{\text{def}}{=}}}
+\newcommand\squareforqed{\hbox{$\blacksquare$}}
+
+\newcommand{\header}[1]{\noindent\textbf{#1}}
+
+\hyphenation{non-empty Mu-thu-krish-nan}
+
+\newcommand{\Read}{\mathsf{read}}
+\newcommand{\Write}{\mathsf{write}}
+\newcommand{\algAccess}{\mathsf{Access}}
+
+
+\newcommand{\poly}{{\rm poly}}
+
+\newcommand{\var}{\mathsf{var}}
+\newcommand{\rd}{\mathsf{read}}
+\newcommand{\wt}{\mathsf{write}}
+\newcommand{\st}{\mathsf{cpustate}}
+\newcommand{\state}{\mathit{state}}
+%\newcommand{\cst}{\mathit{st}}
+\newcommand{\cst}{z}
+\newcommand{\sst}{Z}
+\newcommand{\nextins}{\textsc{NextIns}}
+%\newcommand{\inp}{{\sf in}}
+\newcommand{\inp}{x}
+%\newcommand{\res}{{\sf out}}
+\newcommand{\res}{y}
+
+
+\newcommand{\IdealInit}{\mathsf{ideal\_init}}
+\newcommand{\IdealRead}{\mathsf{ideal\_read}}
+\newcommand{\IdealWrite}{\mathsf{ideal\_write}}
+
+\newcommand{\rr}{{\sf ReadAndRemove}\xspace}
+\newcommand{\add}{{\sf Add}\xspace}
+\newcommand{\evict}{{\sf PathEvict}}
+\newcommand{\pop}{\textsf{Pop }}
+\newcommand{\Pop}{\textsf{Pop}}
+\newcommand{\data}{\mathsf{data}}
+\newcommand{\blockid}{\textsf{u}}
+\newcommand{\op}{\textsf{op}}
+\newcommand{\ops}{\textsf{ops}}
+\newcommand{\argu}{\textsf{arg}}
+\newcommand{\ind}{\textsf{index}}
+\newcommand{\erate}{\nu}
+\newcommand{\leaf}{\ell}
+
+\newcommand{\found}{\mathit{found}}
+
+
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\algS}{\mathcal{S}}
+\newcommand{\algC}{\mathcal{C}}
+\newcommand{\algSbar}{\overline{\mathcal{S}}}
+\newcommand{\algCbar}{\overline{\mathcal{C}}}
+\newcommand{\T}{\mathcal{F}}
+\newcommand{\algA}{\mathcal{A}}
+
+\newcommand{\fmpk}{\mathsf{fmpk}}
+\newcommand{\fmsk}{\mathsf{fmsk}}
+\newcommand{\fsk}{\mathsf{fsk}}
+%\newcommand{\tk}{\mathsf{TK}}
+\newcommand{\setup}{{\sf Setup}}
+\newcommand{\prove}{{\sf Prove}}
+\newcommand{\vrfy}{{\sf Vrfy}}
+
+
+\newcommand{\SNARG}{\mathsf{SNARG}}
+\newcommand{\SNARK}{\mathsf{SNARK}}
+\newcommand{\tr}{\mathsf{tr}}
+\newcommand{\memcheck}{\mathsf{MC}}
+\newcommand{\MC}{\mathsf{MC}}
+\newcommand{\Gen}{\mathsf{Gen}}
+\renewcommand{\P}{\mathsf{Prove}}
+\newcommand{\Ex}{\mathsf{Extract}}
+\newcommand{\V}{\mathsf{Verify}}
+\newcommand{\algSetup}{\mathsf{Setup}}
+\newcommand{\algInit}{\mathsf{Init}}
+\newcommand{\algKeygen}{\mathsf{KeyGen}}
+\newcommand{\algVerify}{\mathsf{Verify}}
+\newcommand{\algCheck}{\mathsf{CheckDigest}}
+\newcommand{\algCompute}{\mathsf{Compute}}
+\newcommand{\algPrepare}{\mathsf{ProbGen}}
+\newcommand{\algProbgen}{\mathsf{ProbGen}}
+\newcommand{\digest}{d}
+\newcommand{\gsk}{\mathsf{gsk}}
+\newcommand{\digestn}{\widetilde{d}}
+\newcommand{\sk}{\mathit{sk}}
+\newcommand{\aux}{\mathsf{aux}}
+\newcommand{\ek}{\mathsf{ek}}
+\newcommand{\pk}{\mathit{pk}}
+\newcommand{\SIM}{\mathsf{Sim}}
+\newcommand{\PRF}{\mathsf{PRF}}
+\newcommand{\PRP}{\mathsf{PRP}}
+\newcommand{\hybrid}{\mathsf{H}}
+\newcommand{\vcram}{\mathsf{VCRAM}}
+\newcommand{\VCRAM}{\Pi}
+\newcommand{\digestfunc}{\mathsf{digest}}
+\newcommand{\params}{\mathit{params}}
+
+\newcommand{\MAC}{\mathsf{MAC}}
+\newcommand{\GC}{\textsc{GC}}
+\newcommand{\RGC}{\textsc{RGC}}
+\newcommand{\GRAM}{\textsc{GRAM}}
+\newcommand{\Gb}{\mathsf{Garble}}
+\newcommand{\Gdc}{{\mathsf{G_D}}}
+\newcommand{\GT}{{\mathsf{GarbleTrans}}}
+\newcommand{\GI}{\mathsf{GEnc}}
+\newcommand{\GDec}{\mathsf{GDec}}
+\newcommand{\GSetup}{\mathsf{GSetup}}
+\newcommand{\Tr}{\textsc{Trans}}
+\newcommand{\mTr}{\text{m}\textsc{Trans}}
+\newcommand{\cTr}{\text{c}\textsc{Trans}}
+\newcommand{\GE}{\mathsf{GEval}}
+\newcommand{\GTE}{\mathsf{GTEval}}
+\newcommand{\ORAM}{\mathsf{ORAM}}
+
+\newcommand{\pCompile}{\mathsf{pCompile}}
+\newcommand{\oCompile}{\mathsf{oCompile}}
+\newcommand{\RAM}{f}
+
+
+\newcommand{\Dec}{\textsf{Dec}}
+
+
+\newcommand{\bool}{\{0,1\}}
+
+\newcommand{\find}{\mathsf{find}}
+\newcommand{\fhe}{\mathsf{FHE}}
+\newcommand{\kg}{\textsf{KeyGen}}
+%\newcommand{\enc}{\textsf{enc}}
+%\newcommand{\dec}{\textsf{dec}}
+\newcommand{\eval}{\textsf{Eval}}
+\newcommand{\cnt}{\mathit{cnt}}
+\newcommand{\addr}{\mathsf{addr}}
+\newcommand{\raddr}{\mathsf{raddr}}
+\newcommand{\waddr}{\mathsf{waddr}}
+\newcommand{\laddr}{\mathsf{laddr}}
+\newcommand{\tg}{\mathsf{tag}}
+\newcommand{\itg}{\mathsf{itag}}
+\newcommand{\itgs}{\mathsf{itags}}
+\newcommand{\otg}{\mathsf{otag}}
+\newcommand{\otgs}{\mathsf{otags}}
+\newcommand{\tgs}{\mathsf{tags}}
+\newcommand{\symb}{\mathsf{symbol}}
+
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\env}{\mathcal{Z}}
+
+%\newcommand{\advantage}{\mathbf{Adv}}
+%\newcommand{\cpa}{\sf CPA}
+\newcommand{\he}{\mathcal{HE}}
+\newcommand{\prob}{\ensuremath{\mathbf{Pr}}}
+%\def\sk{\mathit{sk}}
+%\def\pk{\mathit{pk}}
+
+\newcommand{\name}{verifiable oblivious storage\xspace}
+\newcommand{\namebig}{Verifiable Oblivious Storage\xspace}
+\newcommand{\nameshort}{VOS\xspace}

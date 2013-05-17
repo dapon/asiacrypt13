@@ -1,0 +1,472 @@
+\section{Introduction}
+\label{sec:intro}
+Cloud computing allows users and organizations to outsource
+both their {\it data} and {\it computation} to cloud servers.
+Imagine that a client $C$ outsources
+a database $DB$ (e.g., a SQL database, a key-value store,
+a graph, etc.)\@
+to an untrusted cloud server $S$.
+The client will then make a series of queries to the server.
+For example, the client can ask the server to
+compute a function over the outsourced $DB$, and return the answer;
+the client can also make update queries such as inserting, deleting,
+or modifying entries in the database.
+Since the cloud server is outside the
+client's control, a big challenge is how to guarantee the
+{\it privacy} of outsourced data, and the {\it integrity}
+of computation performed by the server.
+
+One way to address this problem is to rely on Non-Interactive
+Verified Computation (NIVC), first proposed by
+Gennaro, Gentry, and Parno~\cite{ggp} (henceforth referred
+to as the GGP construction), and
+improved by subsequent works~\cite{ggp,GLR11,chung-outsource,DBLP:conf/icalp/ApplebaumIK10,memory-delegation,ParnoRV12,spanprogram,snarglinearproof}.
+At a high-level, NIVC schemes allow a client to
+outsource a database to a server
+%such that (1)~the server gains no information about the
+%database \jnote{is this true? [GGP] hides the input $x$ but not the function~$f$, and in this
+%case the database defines the function, no?};
+%and (2)~the 
+such that it can verify the correctness of
+the subsequent query results efficiently.
+Some schemes additionally guarantee the privacy
+of the database, and/or the inputs and outputs to the queries.
+
+There are, however, several drawbacks with most existing schemes:
+First, most schemes~\cite{ggp,GLR11,chung-outsource,DBLP:conf/icalp/ApplebaumIK10,memory-delegation,ParnoRV12,spanprogram,snarglinearproof}
+require the server to perform
+{\it linear} (in the database
+size) computation, even when the
+query takes {\it sublinear} time to run in the insecure (i.e., unencrypted
+and unauthenticated) setting.
+This can be a prohibitive overhead in real-world applications.
+In fact, most existing database implementations
+leverage efficient data structures
+such that answering queries (e.g., binary search, range queries)
+take sublinear time.
+
+Second,
+while insertions, deletions, and updates,
+are common-place in practical
+applications,
+most existing NIVC schemes~\cite{ggp,GLR11,chung-outsource,DBLP:conf/icalp/ApplebaumIK10,ParnoRV12,spanprogram,snarglinearproof}
+do not allow efficient updates to the database.
+For example, with the GGP construction,
+updating the database would require rerunning the preprocessing
+algorithm, which takes at least time linear
+in the size of the database.
+
+
+\subsection{Our Main Results and Contributions}
+We consider the Random Access Machine (RAM) model of computation, since most real-world databases queries 
+can be computed efficiently (i.e., in sublinear time) in the RAM model.
+We make the following contributions:
+
+\paragraph{New definitions.}
+We formally define the problem of Verifiable Computation
+in the RAM model (VC-RAM). We define the full security of VC-RAM using
+a simulation-based definition (equivalent to
+Universal Composability) assuming an
+honest client and a malicious
+%\babis{you might want to say curious server as well}
+server.
+Our formulation naturally supports {\it updates} to the database.
+%\jnote{This can be cut --- I don't think it's a big deal to introduce these definitions.}
+
+\ignore{
+First, our VC-RAM formulation can be viewed as a generalization
+of a line of research
+called authenticated data structures\elaine{cite}.
+Our definition is also a generalization of what we refer to as
+\name, which has
+been studied implicitly in several related work \elaine{cite} --
+however, still lacks
+a complete security definition.
+We elaborate on the implications of our result
+and additional applications
+in Section~\ref{sec:implications}.
+}
+
+\paragraph{Constructions with near-optimal
+client and server computation.}
+We propose two new VC-RAM constructions,
+one that is verifiable-only, but does not guarantee privacy;
+and a second construction that guarantees verifiability and privacy
+simultaneously.
+
+
+Our constructions achieve {\it near-optimal} computation overhead
+for both the client and the server in the following sense.
+Let $\lambda$ denote the security parameter,
+$n$ denote the memory size, and $|x|$ and $|\res|$ denote
+the input and output sizes respectively.
+\begin{itemize}
+\item
+The client's online computation
+%\elaine{actually may be $\poly(|x|, \lambda)$, but a bigger
+%query can be split into smaller ones to get the following near optimal result}
+%\jnote{I don't understand what it means to ``split a query into smaller ones.''}
+for each query is $O(|x| + |\res|) \cdot \poly(\lambda)$,
+and is independent of $\tau$.
+%where $|x|$ and $|\res|$ denote the bit length of the input
+%and output respectively, and lambda is the security parameter.
+Notice that the client has to pay at least $|x|+|y|$ cost
+to read the input and output.
+%{\it independent of the time to execute the query};
+\item
+%the server's computation
+%overhead is similar to the plain (i.e., unencrypted and unauthenticated)
+%setting.
+If a RAM program takes $\tau$ time to compute
+in the insecure setting,
+our VC-RAM construction requires the server
+to perform only $\tau \cdot \poly(\lambda, \log n)$ computation,
+%where $\lambda$ is the security parameter, and $n$ is the memory size.
+This implies that for queries that take sublinear time,
+our server computation is also sublinear.
+%\item \babis{what is the size of the proof? I assume $|x|+|y|$? Could we put it here?}
+\end{itemize}
+
+\paragraph{Additional implications of our results.}
+Our results have several implications beyond VC-RAM,
+%We generalize several
+%related lines of research, and answer several open questions in these
+%areas some of which have eluded the community for years,
+%\jnote{Too over-the-top!}
+including (1)~{\it authenticated data structures}; (2)~{\it \name};
+and (3)~{\it verifiable
+``searchable encryption''} in the symmetric-key setting for
+{\it general queries}, {\it hiding access patterns}, 
+and with {\it sublinear} server computation (for queries that run in
+sublinear time).
+We now elaborate on the applications and implications of our main
+results.
+
+\ignore{
+including 1) we generalize a line of research called {\it authenticated
+data structures} \elaine{cite};
+2) we generalize {\it \name}, which has
+been studied implicitly in several related work \elaine{cite} --
+however, still lacks
+a complete security definition. We also allow
+more efficient constructions of \name; and
+3) our results also imply {\it non-interactive, verifiable
+searchable encryption} in the symmetric-key setting, for
+{\it arbitrary queries}, additionally, allowing {\it updates}
+and {\it sublinear} server computation for queries that run in
+sublinear time.
+We now elaborate on the implications and
+additional applications of our results
+in Section~\ref{sec:implications}.
+}
+
+
+%\subsection{Applications and Implications of Our Main Results}
+%\label{sec:implications}
+
+\subsection{Efficient \namebig and Complete Security Definitions}
+%\paragraph{More efficient \name and complete security definitions.}
+Our first application of VC-RAM is 
+%to enable a more efficient
+\name (\nameshort). 
+%\babis{I would suggest using ARAM (or something that contains the word ``active") for Active oblivious RAM. VOS does not relate at all to the fact that the server is active. So basically, we set out to do ARAM, and we see that in order to achieve it, verifiability is needed. Then, the verifiable part comes for free, it is not that we set out from the beginning to do verifiable oblivious storage}. \jnote{More efficient than what? Who else considered that problem?}
+\nameshort is related to, but different
+from, oblivious RAM (ORAM)~\cite{oram00}.
+%,oram01,oram02,oram03,oram04,oram05,oram06,oram07,oram08,oram09,oram10,oram11,oram12,oram13,oram14}.
+Historically, in the context of ORAM the honest server only reads/writes blocks of data as instructed
+by the client, but does no computation.
+More recently~\cite{LO12,oram13}, researchers have considered a more general model
+in which the server performs local computation as well. We refer to 
+the latter model as \name.
+%\jnote{Could be written better.}
+%\jnote{Another point is being lost here. Usually ORAM just considers privacy, i.e., an honest-but-curious
+%server. Here we are adding (explicitly) verifiability, i.e., protection against an actively malicious
+%server.} \elaine{i dont think so, they consider malicious servers
+%that can corrupt data, and use MAC to secure against it.}
+
+%Later, ORAM
+%is applied to the cloud computing setting
+%to allow a client to store sensitive data with an untrusted
+%server, while hiding both the data and access patterns
+%from the server.
+%In this setting, it makes sense to consider an {\it active}
+%server {\it capable of computation}.
+%To differentiate, we refer to this problem
+%as \name (\nameshort).
+%The community has proposed schemes that leverage server
+%computation to reduce the round complexity of \nameshort~\cite{LO12,oram13}.
+
+We observe that the \nameshort setting demands a
+different security definition as in the original ORAM setting
+considered by Goldreich and Ostrovsky~\cite{oram00} -- particularly,
+if the server is required to perform computation as part
+of the protocol, our definition aims to achieve {\it verifiability}
+even when a malicious server 
+may arbitrarily deviate from the prescribed
+behavior (other than simply corrupting 
+the data~\cite{oram00}).
+
+Our security definition for VC-RAM immediately implies
+a full-fledged security definition for \nameshort, since
+\nameshort is a special case of VC-RAM, in the sense that
+the RAM program considered simply reads or writes data.
+
+We construct more efficient
+%\babis{here we are comparing ARAM with ORAM, so we cannot really compare. just say that ARAM achieves same security properties with ORAM, yet with better complexities.}
+\nameshort schemes in comparison with known
+constructions in the ORAM model~\cite{oram00,oram01,oram03,oram07,oram09}, and 
+known schemes in the \nameshort model~\cite{oram13, LO12}.
+Relying on Fully Homomorphic Encryption
+and our verifiable-only VC-RAM construction,
+assuming constant client-side storage and a reasonably large block size,
+we can construct
+a \nameshort scheme with {\it $O(\log n /\log \log n)$
+bandwidth overhead}
+with $\poly (\log n, \lambda)$ server computation;
+alternatively, we can achieve $O(1)$ bandwidth cost
+with $O(n^\alpha \log n)\poly(\lambda)$ server computation (where $\alpha <1$ is a constant).
+%\elaine{is the dependence on lambda poly for these FHE schemes?,
+%i assume it is not just O(lambda)? the latter would be better though.}
+%\babis{could you add that our scheme has only one round of interaction?}
+Our schemes are
+secure with respect to a {\it malicious} server.
+In comparison, the best known result in the
+constant client storage setting requires $O(\log ^2 n/\log \log n)$
+overhead~\cite{oram03} and works in the ORAM model.
+
+Note that this result does NOT violate the known
+super-logarithmic lower bound
+for ORAM~\cite{oramlower}, since
+this lower bound only applies to
+the traditional ORAM setting, not to \nameshort.
+
+
+\subsection{Other Applications and Implications of Our Main Result}
+\paragraph{Verifiable and oblivious ``searchable encryption'' in the symmetric-key setting.}
+Searchable encryption~\cite{songsearch,DBLP:conf/ccs/CurtmolaGKO06,pkse,BW07,symenc,rangequery,GKPVZ12,DBLP:conf/eurocrypt/LewkoOSTW10,KSW08} allows a client
+to outsource a set of encrypted documents to a server,
+and later make search queries over the encrypted data.
+Searchable encryption %in the symmetric-key setting
+has been studied first for keyword queries~\cite{songsearch,DBLP:conf/ccs/CurtmolaGKO06,pkse,dynamicse},
+and later for
+conjunctive queries~\cite{BW07,rangequery},
+inner product queries~\cite{KSW08,DBLP:conf/eurocrypt/LewkoOSTW10}, and general queries~\cite{GKPVZ12}.
+Particularly, private-index
+functional encryption~\cite{GKPVZ12} implies a searchable encryption
+scheme for general queries.
+
+Previous verifiable searchable encryption schemes
+suffer from the following drawbacks:
+{\it i)} Existing schemes leak access patterns,
+i.e., the server can learn which encrypted documents
+match the query. Such access pattern leakage has been shown to be
+harmful due to statistical attacks~\cite{accesspatternleak}.
+{\it ii)} Existing schemes (except schemes for keyword queries~\cite{DBLP:conf/ccs/CurtmolaGKO06,dynamicse})
+require linear server computation, namely,
+the server needs to perform computation
+for every encrypted document in the dataset.
+{\it iii)} 
+Most existing searchable encryption schemes (with the exception of
+Kurosawa \etal~\cite{DBLP:conf/fc/KurosawaO12})
+assume a semi-honest server,
+and do not
+provide verifiability against malicious servers.
+For example, a malicious server can potentially leave out
+encrypted documents that match the query, violating completeness.
+%\babis{actually no, there is one paper on that by Kurosawa~\cite{DBLP:conf/fc/KurosawaO12}, I added it in the refs.bib}.
+
+The task that searchable encryption aims to achieve\footnote{
+Technically, VC-RAM is not a searchable encryption scheme,
+but a different formulation which better captures
+the goal that searchable encryption tried to achieve.
+Searchable encryption
+is formulated the same way as private-index functional encryption,
+i.e., each token can be used to evaluate on {\it any} ciphertext.
+}
+can be regarded as a special
+case of VC-RAM where the queries are searches.
+Our construction therefore addresses all of the above drawbacks
+by providing a (non-interactive)
+{\it verifiable} searchable encryption scheme
+for {\it general queries}
+in the symmetric-key setting,
+allowing {\it sublinear} server computation for sublinear-time
+queries, and {\it hiding access patterns}.
+%Our scheme is also non-interactive -- notice that
+%an interactive scheme exists as a naive application of oblivious RAM.   
+%\babis{I would say that VC-RAM with privacy gives a non-interactive efficient  searchable encryption scheme with no leakage at all. Note that such a scheme with interaction does exist by naive application of ORAM.}
+\ignore{Our result implies a (non-interactive)
+{\it verifiable} searchable encryption scheme for {\it general queries}
+in the symmetric-key setting, secure against a malicious server.
+Furthermore, unlike existing schemes, we allow efficient index
+structures to be built over the dataset,
+such that the server perform  {\it sublinear} computation when the
+query can  be executed in sublinear time in the insecure setting.
+Our scheme also additionally {\it hides access patterns}.
+}
+
+\ignore{
+\paragraph{Private-index functional encryption
+for RAM programs.}
+\elaine{it only works in symmetric-key setting! needs to change.}
+Somewhat related to the above,
+our result also implies a private-index functional encryption
+scheme for RAM programs, where one can ``encrypt'' contents of
+memory, and later submit ``tokens'' corresponding to a RAM
+program.
+Given the a token for a RAM program $f$ and encrypted
+data $D$, one can evaluate $f(D)$, but learn nothing else.
+%Private-index functional encryption for RAMs is very similar to
+%a VC-RAM schem where the encrypted data
+%need not be updated --
+Achieving this requires a
+small modification of our main construction,
+since the final garbled circuit needs to be modified to release
+the decrypted $f(D)$.
+We elaborate on this in Appendix~\ref{sec:fe}.
+
+\elaine{actually write this section}
+}
+
+\paragraph{Generalization of (private) authenticated data structures.}
+%Our work naturally
+%unites two lines of research, verified computation~\cite{ggp,GLR11,chung-outsource,DBLP:conf/icalp/ApplebaumIK10,ParnoRV12,spanprogram,snarglinearproof}
+%and authenticated data structures~\cite{nn-crcu-98,GoodrichTS01,cpap-rt-07,ptt-oadsmf-10,ptt-aht-08,sets-auth,dgkmns-faxd-04,graph-auth,DBLP:journals/algorithmica/MartelNDGKS04}.
+Authenticated data structures~\cite{nn-crcu-98,GoodrichTS01,cpap-rt-07,ptt-oadsmf-10,ptt-aht-08,sets-auth,dgkmns-faxd-04,graph-auth,DBLP:journals/algorithmica/MartelNDGKS04}
+allow a user to outsource a dataset to a server while
+retaining only a small digest.,
+Later the client can
+make queries or updates to the dataset,
+and additionally verify that
+the answers provided by the server are correct.
+
+Authenticated data structures focus on designing
+efficient schemes for specific queries such as
+(non)-membership queries~\cite{nn-crcu-98,GoodrichTS01},
+range queries~\cite{DBLP:journals/algorithmica/MartelNDGKS04}, set operations~\cite{sets-auth},
+graph queries~\cite{graph-auth}, etc.
+Unlike in the verifiable computation line of research,
+authenticated data structures allow the server to compute
+in sublinear time for sublinear-time queries.
+Existing authenticated data structures
+do not take privacy into account in their design.
+Even without the privacy consideration,
+how to construct efficient (i.e., sublinear server computation) authenticated data structures
+for arbitrary databases and queries
+remains an open question.
+
+Our work generalizes authenticated data structures and answers
+this open question in the affirmative: 1) we support
+arbitrary queries and data structures;
+2) like in existing
+authenticated data structure schemes, the server's
+computation is close to the insecure setting;
+3) our client's verification cost is independent of
+the query's execution time;
+4) we additionally offer privacy guarantees
+in the two-party setting (but not the three-party setting) --
+however, our verifiable-only scheme works both the two-party
+and three-party settings.
+%and 5) both VC-RAM and authenticated data structures consider
+%the non-interactive setting.
+
+
+%\babis{you can view the three party setting as a two-party setting with many clients. One client only updates and all the other client can query. Since we are using FHE, I am not sure we can support many clients in the two party setting. On the other hand, VC-RAM without privacy can be used to implement any three-party authenticated data structure.}
+
+
+
+\ignore{
+\elaine{below is note to myself.}
+describe database outsourcing scenario
+
+why ram programs: 1) want sublinear server computation overhead;
+2) naturally supports updates
+
+
+first to formalize and define vc-ram.
+formulation naturally supports updates.
+
+
+show provably secure constructions in both the
+verifiable-only and fully secure
+(i.e., private and verifiable) settings
+
+
+generalization of authenticated data structure, for arbitrary queries,
+and with privacy.
+our framework unifies verified computation and
+authenticated data structures. the community previously
+approached these from different angles and application settings.
+
+applications:
+
+our verifiable-only scheme can be used to build
+an \name scheme with $O(\log n)$ bandwidth cost
+and constant client state.
+Particularly, the idea is to rely on FHE -- but use
+verifiable-only VC-RAM to enforce honest server behavior.
+\name is basically ORAM with server-side computation.
+while server-side computation has been considered previously in [fill]
+oram constructions to
+improve round complexity, previously adopted
+security definitions are
+incomplete particularly in the presence of a malicious server.
+We address this problem by providing a full-fledged simulation-based
+security definition for \name.
+This definition is implicit given the full security definition
+of VC-RAM, since \name can be considered as a special case of
+VCRAM, when the RAM program simply reads or writes memory.
+
+private, verifiable, and non-interactive searches on databases,
+supporting updates.
+
+}
+
+%\subsection{Technical Highlights}
+
+\subsection{Other Related Work}
+Related work on Non-Interactive Verified Computation~\cite{ggp,GLR11,chung-outsource,DBLP:conf/icalp/ApplebaumIK10,memory-delegation,ParnoRV12,spanprogram,snarglinearproof} and authenticated data structures~\cite{nn-crcu-98,GoodrichTS01,cpap-rt-07,ptt-oadsmf-10,ptt-aht-08,sets-auth,dgkmns-faxd-04,graph-auth,DBLP:journals/algorithmica/MartelNDGKS04}
+has been mentioned earlier Section~\ref{sec:intro}.
+
+Garbled RAM, recently proposed by Lu and Ostrovsky~\cite{LO12}
+is very closely related to our work.
+%can be made to work in the VC-RAM setting -- 
+Garbled RAM can be modified to work in our VC-RAM setting --
+however, the client's online computation overhead per query
+is proportional to the run-time of the RAM program.
+Our second construction, the verifiable
+%\babis{I think for the verifiable only part, we do not need Garble RAM. Could we make the distinction so that the reader is not confused?} 
+and private scheme,
+builds on top of the garbled RAM work -- 
+for various technical reasons explained later, 
+we need a {\it generalized} variant 
+of the garbled RAM scheme 
+that builds on {\it any} Oblivious RAM compiler, and 
+proven secure under 
+our new VC-RAM security model  
+(a bit stronger than Lu and Ostrovsky's definition~\cite{LO12}).
+We refer to this scheme (described in Appendix~\ref{sec:garbledRAM})
+as a verifier-inefficient VC-RAM scheme. In 
+Section~\ref{sec:VP}, we show how to boost its efficiency
+such that the client's online computation is  
+independent of the RAM's run-time.
+
+We note that unlike the GGP construction which wraps 
+Fully Homomorphic Encryption (FHE) around a garbled circuit,  
+wrapping FHE around Garbled RAM does not  
+work in our case -- and the reason is similar to 
+why the strawman scheme in Section~\ref{sec:VP} fails.
+
+The techniques for our verifiable-only 
+VC-RAM scheme are reminiscent of those used by Ben-Sasson 
+\etal~\cite{RAMtocircuit}
+for reductions from RAMs to delegatable 
+succinct constraint satisfaction problems.
+
+Our work is also related to PCPs~\cite{BFLS91,FGL96,pcp,ALM98,Kil92,Kil95}, 
+and interactive proofs~\cite{LFKN92,Sha92,babai85,GMR85,GMR89}.
+Although we mainly focus on the non-interactive setting.
+Our verifiably-only construction relies 
+on non-interactive arguments (of knowledge) as 
+a building block~\cite{Mic94,Mic00,FS87,BCCT12,GLR11,DFH12,spanprogram}.
+

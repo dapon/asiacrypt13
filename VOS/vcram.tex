@@ -1,0 +1,303 @@
+\section{VC-RAM Construction}
+\label{sec:verifiableonly}
+In this section we sketch a construction for verifiable-only VC-RAM construction.
+%in the secretly verifiable setting.
+Our construction is based on any publicly-verifiable memory-checking scheme and~SNARK; see
+Appendices~\ref{app:MC} and~\ref{app:SNARKs}.
+Our construction is publicly verifiable if the underlying SNARK is publicly verifiable;
+else it is secretly verifiable.
+
+%We note that in spite of our verifiable and private construction described
+Although it may appear as if our verifiable and private construction  
+(Section~\ref{sec:VP}) subsumes the verifiable-only scheme,
+the verifiable-only construction is actually  
+worthy of independent interest, since 
+1) we can additionally achieve public verifiability in this setting;
+2) the verifiable-only scheme is cheaper than our verifiable and private
+scheme -- it turns out that this is necessary 
+for our \name application (Section~\ref{sec:vosbrief}). 
+
+A memory-checking scheme easily yields an interactive VC-RAM scheme.
+Say we want to execute queries starting from initial data array~$D$ (recall that $D$ includes both the
+program~$f$ as well as any underlying data).
+The client simply outsources storage of $D$ to a server using a memory-checking scheme.
+To answer query~$x$, the client beings running the RAM program as in Section~\ref{sec:def-RAMs},
+making read/write requests
+to the
+server as needed during the course of this execution.
+Each time the server gives a response, the client first verifies the response (halting execution if
+verification fails), and then updates its digest appropriately.
+It is trivial to see that the resulting scheme satisfies verifiability.
+
+The above approach can be made non-interactive if the memory-checking
+scheme is publicly verifiable -- by having the client simply send
+$x$ to the server, and then having the server
+simulate on its own the actions of the client and the server
+from the previous, interactive protocol. At the end, the server
+sends the final result back to the client along with the entire sequence of proofs
+that the client can verify all at once.
+
+We describe this non-interactive scheme more formally since we will further modify it later below.
+Let $(\setup, \prove, \vrfy)$ be a memory-checking scheme.
+Given initial array~$D$ containing (in addition to data)
+a program $f$ that runs for exactly~$\tau$
+steps, the client
+runs $(\tilde D_0, d_0) \leftarrow \setup(1^\lambda, D)$ and sends $\tilde D_0, d_0, \tau$
+to the server; the client stores only~$d_0$.
+The client also sends to the server a description of 
+the $\nextins$  circuit.
+When the client later wants to compute the answer to some query~$x$, it sends $x$ to the server.
+The server sets $\st_0=x$ and ${\sf fetched}_0=\perp$. Then for $t=1, \ldots, \tau$ it
+does:
+\[
+\begin{array}{l}
+\left(\data_t, \waddr_{t}, \raddr_{t}, \st_{t}\right)
+  := \nextins\left({\sf fetched}_{t-1}, \st_{t-1}\right)\\
+I_t := (\data_t, \waddr_t, \raddr_t) \\
+(\tilde D_t, {\sf fetched}_t, \pi_t) \leftarrow \prove(\tilde{D}_{t-1}, I_t)
+\end{array}
+\]
+Finally, it sends the result $y=\data_\tau$ along with the sequence
+$({\sf fetched}_1, \pi_1, \ldots, {\sf fetched}_\tau, \pi_\tau)$ to the client.
+To verify, the client sets $\st_0=x$ and ${\sf fetched}_0=\perp$. Then for $t=1, \ldots, \tau$
+it does:
+\[
+\begin{array}{l}
+\left(\data_t, \waddr_{t}, \raddr_{t}, \st_{t}\right)
+  := \nextins\left({\sf fetched}_{t-1}, \st_{t-1}\right)\\
+I_t := (\data_t, \waddr_t, \raddr_t) \\
+(b_t, d_t) \leftarrow \vrfy(d_{t-1}, I_t, {\sf fetched}_t, \pi_t)
+\end{array}
+\]
+If $b_1 = \cdots = b_\tau = 1$ and $y=\data_\tau$ then the client accepts~$y$ as the correct result.
+The client updates its local digest to~$d_\tau$; by doing so, the client
+and server are now ready to evaluate the RAM program again on some other input~$x'$ (with the memory
+array updated appropriately).
+
+
+%\elaine{todo: use a constant overhead memory checking scheme --
+%it does not circumvent the memory checking lower-bound?
+%need to double check}
+
+The above scheme allows the client to outsource \emph{storage}, but not \emph{computation}.
+We can address this, however, using a SNARK. Define the following $\mathcal{NP}$
+relation~$R$:
+\[\left( \rule{0pt}{10pt} (x, y, d_0, d_\tau), \; ({\sf fetched}_1, \pi_1, \ldots, {\sf fetched}_\tau, \pi_\tau) \right) \in R\]
+iff the client verification described above succeeds, and furthermore the final
+state of the client's digest is~$d_\tau$.
+We now modify the previous scheme as follows:
+Rather than having the server send $({\sf fetched}_1, \pi_1, \ldots, {\sf fetched}_\tau, \pi_\tau)$,
+and then having
+the client verify all these proofs, we instead have the server \emph{prove} (using a SNARK)
+that a valid proof sequence exists. Finally, the server sends 
+the client $(y, d_\tau)$, in addition to a succinct proof 
+that a valid witness 
+$({\sf fetched}_1, \pi_1, \ldots, {\sf fetched}_\tau, \pi_\tau)$ exists
+for the NP statement $(x, y, d_0, d_\tau)$.
+Using the SNARK from~\cite{spanprogram} (see Appendix~\ref{app:SNARKs}) and
+any memory-checking scheme, we thus obtain:
+
+
+
+
+\begin{thm}[Efficient Verifiable RAM Computation]
+\label{thm:vc}
+The above gives a verifiable (but not private) 
+VC-RAM where the server runs in time $O(\tau \log n) \cdot \poly(\lambda)$,
+the verifier runs in time $O(|x| \cdot \lambda)$, and the proof size is~$O(\lambda)$.
+
+The VC-RAM is publicly verifiable if the memory-checking scheme and SNARK are.
+\end{thm}
+\begin{proof}
+The correctness of the construction can be derived from the correctness
+of the underlying SNARK and memory checking scheme in a straightforward
+manner.
+
+Verifiability of the client-efficient construction follows from verifiability
+of the client-inefficient construction plus extractability of the SNARK; namely,
+if there exists an adversary who can break verifiability in the client-efficient version,
+then by extracting from that adversary a witness ${\sf fetched}_1, \pi_1, \ldots, {\sf fetched}_\tau, \pi_\tau$
+we can break verifiability of the client-inefficient version.
+We defer the straightforward details to the full version.
+\end{proof}
+
+
+\ignore{
+Due to the soundness of the underlying SNARG,
+except with negligible probability,
+there exists an admissible trace $\tr$ which satisfies the above properties
+V1, V2, V3, and V4.
+Now, due to the soundness of the memory checking scheme,
+all data values read from memory in the trace $\tr$ must be correct.
+Therefore, we have an execution trace such that
+1) it terminated correctly in $\tau$ time steps (V1);
+2) its initial and terminating states are consistent
+with the inputs and outputs (V4);
+3) every state transition function is performed correctly (V2);
+and 4) every memory read returned the correct value (V3).
+
+\elaine{memory checking scheme works across multiple queries.}
+}
+
+\ignore{
+\section{Enforcing Honest Server Behavior}
+In this section, we show how to apply Verifiable Computation for RAM programs
+to achieve security against a malicious
+server, and enforce that the server adheres to the prescribed computation.
+We describe our scheme based on
+the binary ORAM~\cite{asiacrypt11}.
+
+\subsection{Scheme}
+\elaine{below is a sketch, needs to be spelled out, and presented more formally.}
+
+During a one-time initialization stage, the client
+runs the $\mathsf{VCRAM}.\algKeygen(1^\lambda)$ algorithm to obtain
+a public key $\mathsf{VCRAM}.\pk$,
+and runs the FHE key setup algorithm \elaine{use notation}
+to obtain $(\mathsf{FHE}.\pk, \mathsf{FHE}.\sk)$.
+The client sends
+$\pk := (\mathsf{VCRAM}.\pk, \mathsf{FHE}.\pk)$ to the server.
+The client uses FHE to prepare initial ORAM image.
+The client uploads the FHE-encrypted ORAM image as well as the RAM program $f$
+for accessing the ORAM to the server.
+The client runs the $\mathsf{VCRAM}.\algSetup$ algorithm on the FHE-encrypted ORAM image
+and $f$,
+and keeps an initial digest $d_0$ locally.
+
+Each data request consists of $O(\log N)$ rounds of communication, where each round accesses
+a binary tree~\cite{asiacrypt11}.
+In each round, the following happens:
+\begin{itemize}
+\item
+\rr stage:
+\begin{itemize}
+\item
+Client sends request to server, the request contains a path identifier (referred to
+as the designated leaf node in \cite{asiacrpt11}),
+an FHE-encrypted block identifier.
+\item
+Server performs $\text{poly} \log(N)$ amount of RAM computation,
+and sends an FHE-encrypted block to the client.
+A total of $\text{poly} \log(N)$ blocks along the path are touched and updated on the server.
+The server sends the updated digest to the client.
+\item
+Using the $\algVerify$ algorithm of the VC-RAM scheme, Client verifies the
+correctness of the block returned as well as the updated digest.
+\end{itemize}
+\item
+\add stage:
+\begin{itemize}
+\item
+Client sends FHE-encrypted block identifier and contents to the server.
+Client also sends the server $O(\log(N))$ random numbers indicating which buckets
+at each level to evict from.
+\item
+Server adds the block to the root bucket using operations under FHE.
+Server performs eviction using operations under FHE.
+As a result of the computation, $\text{poly} \log(N)$ blocks on the server
+are updated.
+Server sends client the updated digest.
+\item
+Using the $\algVerify$ algorithm of the VC-RAM scheme, Client verifies the
+correctness of the updated digest.
+\end{itemize}
+\end{itemize}
+
+
+
+\subsection{Proof of Security in the Malicious Model}
+
+\elaine{need to unify notation globally}
+\begin{proof}(malicious model.)
+
+For any real-world adversary $\algS$, we show how to build a simulator $\algSbar$ in the ideal world,
+such that the joint distribution of the two parties in the ideal world are indistinguishable
+from the real world.
+
+
+\elaine{to fix: simulator has VC-RAM.sk}
+\paragraph{Init.}
+\elaine{to fix: adversary can choose D0}
+The simulator $\algSbar$ generates the public key $\pk := (\mathsf{VCRAM}.\pk, \mathsf{FHE}.\pk)$,
+\elaine{define keygen algorithm}
+and gives them to the real-world adversary $\algS$.
+$\algSbar$ now prepares an FHE-encrypted ORAM image -- initially, all memory locations
+contain zero.
+$\algSbar$ now runs
+the $\mathsf{VCRAM}.\algSetup$
+algorithm on the RAM program $f$ and
+on the FHE-encrypted ORAM image,
+and records the current digest $d_0$.
+$\algSbar$ sends $\algS$ the encrypted ORAM image and $f$.
+
+%On receiving the public key
+%the RAM program $f$, and the encrypted ORAM image from the client,
+%$\algSbar$ sends an $\mathsf{init}$ message to the trusted third-party $\T$.
+
+\paragraph{Query.}
+At any point of time, $\algSbar$
+always keeps track of the latest digest $d_i$.
+
+Whenever $\algSbar$ receives a message $\bot$ from the trusted third-party $\T$,
+It performs $O(\log N)$ rounds of communication with $\algS$.
+For each round of communication:
+$\algSbar$ sends a ``random'' request to $\algS$.
+\elaine{elaborate on random}
+%and performs $\text{poly} \log (N)$ amount of RAM computation.
+If $\algS$ aborts during any round, $\algSbar$ sends $0$ to $\T$.
+Otherwise,
+$\algSbar$ checks if the output of $\algS$ in every round passes the $\mathsf{VCRAM}.\algVerify$
+algorithm (using the recorded digest).
+If $\mathsf{VCRAM}.\algVerify$ fails, $\algSbar$ sends $0$ to $\T$.
+Otherwise,
+If $\mathsf{VCRAM}.\algVerify$
+passes for all rounds,
+$\algSbar$ updates its recorded digest, and sends $1$ to $\T$.
+
+%\paragraph{Output.}
+
+
+\paragraph{Indistinguishability of real-world and ideal-world execution.}
+First, due to the semantic security of the FHE encryption scheme
+and the security of the underlying ORAM,
+the real-world server $\algS$ cannot distinguish whether it is talking
+to a real-world client with the same input $x$, or talking to a simulator $\algSbar$ -- otherwise,
+it is easy to build a reduction showing that one can leverage $\algS$ to break
+the semantic security of the FHE scheme or the security of the underlying ORAM scheme.
+
+Now, we use a sequence $(b_1, b_2, \ldots, )$ of indicator bits
+to denote whether
+$\algS$'s outputs pass the $\mathsf{VCRAM}.\algVerify$
+algorithm with each data request. $b_i = 1$ means that $\algS$'s outputs
+pass the
+$\mathsf{VCRAM}.\algVerify$
+algorithm for all communication rounds for the $i$-th data request; otherwise $b_i = 0$.
+This sequence of indicator bits
+must be computationally indistinguishable whether $\algS$ is talking to a
+real-world client with input $x$, or an ideal-world simulator $\algSbar$ -- since otherwise,
+one could easily leverage $\algS$
+to break the semantic security of the FHE scheme or the security of the underlying ORAM.
+
+Now, assume that the VC-RAM scheme is secure.
+In the real world, if the server's messages all pass the
+$\mathsf{VCRAM}.\algVerify$ algorithm, then the results returned must match the results
+obtained from correctly following the prescribed RAM program.
+Therefore, it is not hard to see that
+$\textsc{Ideal}_{\algCbar(x),\algSbar(y)}$ must be computationally indistinguishable
+from $\textsc{Real}_{\algC(x),\algS(y)}$ -- otherwise,
+
+
+%Note:
+%Indistinguishability of
+%$\textsc{Ideal}_{\algC(x),\algS(y)}$
+%and
+%$\textsc{Real}_{\algC(x),\algS(y)}$
+%relies on
+%1) security of underlying ORAM;
+%2) semantic security of FHE scheme;
+%and 3) security of the VC-RAM scheme.
+%\elaine{continue proof}
+\end{proof}
+}
+
+

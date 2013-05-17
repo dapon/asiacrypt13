@@ -1,0 +1,697 @@
+%\section{Application: Verifiable Oblivious Storage} 
+%\elaine{it is a generalization of blah}
+
+%\subsection{\name with $O(\log n)$ Bandwidth Overhead and $O(1)$ Client Memory, Secure in the Malicious Model}
+\section{\namebig}
+\label{sec:vos}
+VC-RAM is a very powerful primitive, and has immediate implications in
+several areas in cryptography.
+One application is to build efficient \name schemes. 
+Oblivious RAM (ORAM)~\cite{oram00,oram01,oram02,oram03,oram07,oram09,oram13} 
+was initially intended for obliviously simulating RAM programs 
+and achieving software piracy.
+In this setting, the memory is considered 
+{\it passive}, i.e., only
+capable of fetching and storing data, but not capable of performing
+computation.
+
+As cloud computing gains popularity, ORAM was 
+applied to the outsourced data setting, such that
+a client can store data with an untrusted server,
+such that the server learns nothing about the data or
+access patterns. In this setting, it is natural to consider
+{\it active} servers capable of performing computation. 
+In fact, a couple recent constructions~\cite{oram14,LO12} 
+have leveraged server-side computation to achieve single-round ORAM.
+\ignore{
+several constructions~\cite{oram14,LO12}.
+Particularly, 
+Williams \etal~\cite{oram14} and Lu \etal~\cite{LO12} 
+show that by leveraging storage-side computation,
+we can build single-round ORAM schemes.
+}
+
+
+\subsection{Complete Security Definition for \nameshort}
+To differentiate, we use the terminology \name (\nameshort) 
+to refer to the data outsourcing setting when the server
+actively performs computation.
+In fact, we observe that the \nameshort setting demands a new security
+definition from the traditional ORAM setting, and the security
+definition should take into account the fact that a dishonest
+server can arbitrarily deviate from the prescribed computation (other
+than simply corrupting data blocks as the model considered
+by Goldreich and Ostrovsky in their initial ORAM work~\cite{oram00}),
+We note that our VC-RAM security definition immediately implies 
+a full-fledged security definition for \nameshort, since
+\nameshort is just special case of VC-RAM with 
+a degenerated RAM program that simply reads or
+writes data.
+
+
+\subsection{More Efficient \nameshort Construction}
+Under the traditional ORAM (i.e., passive memory) setting, 
+with $O(1)$ %(in terms of data blocks) 
+client private memory,
+the best known result is a recent scheme 
+by Kushilevitz, Lu, and Ostrovsky~\cite{oram03},
+achieving $O((\log n)^2/ \log\log n)$ bandwidth overhead. 
+Meanwhile, lower bound results~\cite{oram00,oramlower}
+have suggested that 
+there is an $O(\log n \log \log n)$
+lower bound on the bandwidth overhead of any Oblivious RAM scheme.
+
+%\paragraph{Summary of result.} 
+However, we observe that this super-logarithmic lower bound
+does {\it not} apply to the \nameshort setting.
+%In fact, we propose a novel \nameshort construction  
+%achieving only $O(\log n/\log \log n)$ 
+%bandwidth overhead, and secure against a malicious server.
+By leveraging server-side computation,
+we can build \nameshort
+schemes that are more bandwidth efficient than
+traditional ORAM schemes, and meanwhile, ensure
+verifiability against an arbitrarily malicious server.
+
+%\begin{thm}
+%Assume 1) existence of collision resistance hash functions, 
+%\elaine{fill in ring LWE blah, assumption of SNARK}.
+%Then, there exists a \nameshort scheme for a reasonably
+%large block size $\beta > $ \elaine{fill in},
+%with $O(\log n / \log \log n)$
+%bandwidth overhead, and $\poly (\log n, \lambda)$ server computation 
+%(per data access), where $n$ is the total number of blocks
+%and $\lambda$ is the security parameter.
+%\end{thm}
+
+\begin{thm}
+Let $g(n)$ denote some function on $n$.
+Assume collision resistance hash functions, 
+the ring LWE assumption with 
+suitable parametrization~\cite{fhe10,BGV12},
+and the $q$-PDH and $q$-PKE assumptions~\cite{spanprogram}.
+Then, there exists a \nameshort scheme for a reasonably
+large block size\footnote{
+Note that the \nameshort data block size $\beta$ is differet from the
+memory word size $\ell$ of the RAM.
+We assume $\beta = \tilde{\Omega}(\lambda)$, and 
+$\ell = O(\log \lambda)$.
+}
+ $\beta = \tilde{\Omega}(\lambda)$,
+%with $O(\log n / \log \log n)$
+with $O(\log n / \log g(n))$ 
+bandwidth overhead, and 
+%$\poly (\log n, \lambda)$ server computation 
+$O(g(n) \log^2 n / \log g(n))\poly(\lambda)$ server computation 
+(per data access), where $n$ is the total number of blocks
+and $\lambda$ is the security parameter.
+\label{thm:vos}
+\end{thm}
+
+The following table shows some interesting special cases
+of Theorem~\ref{thm:vos}.
+
+\begin{center}
+{
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{c|c|c}
+$g(n)$ & server computation & bandwidth overhead \\
+\hline 
+$n^{\alpha}$ for constant $\alpha < 1$ & $O(n^\alpha \log n)\poly(\lambda)$ & $O(1)$\\
+\hline
+$(\log n)^{(\log \log n)^\alpha}$ & 
+\multirow{2}{*}{$O((\log n)^{ (\log \log n)^\alpha + 2}/(\log \log n)^{\alpha+1} )\poly(\lambda)$} & \multirow{2}{*}{$O(\log n/(\log \log n)^{\alpha+1})$}\\
+for constant $\alpha \geq 0$  & & \\
+\hline
+$\log n$ &  $O(\log^3 n/\log \log n)\poly(\lambda)$ & $O(\log n / \log \log n)$ \\
+\hline
+constant $\alpha > 1$ &  $O(\log^2 n)\poly(\lambda)$ & $O(\log n)$
+\end{tabular}
+}
+\end{center}
+
+
+
+
+\ignore{Oblivious RAM was previously studied in the 
+RAM computation model,
+where the CPU is trusted, and RAM is untrusted.
+The goal is to obfuscate the memory addresses visited
+during the RAM computation, such that the memory addresses
+accessed do not leak anything about memory contents (including
+code and data). 
+Formal definitions of ORAM in this model were originally given
+by Goldreich and Ostrovsky in their pioneering 
+paper~\cite{oram00} on ORAM.
+
+Later, ORAM applications extended to the cloud
+setting, where a trusted client would like to outsource
+data storage to an untrusted cloud server. 
+Earlier ORAM schemes assumed a passive server which supports
+only read and write operations, and does not perform any
+computation -- in this model, 
+one can think of the server as being a remote disk.
+This setting is similar to the RAM computation setting, where
+the storage does not perform computation.
+}
+
+\ignore{
+We make the following contributions: 
+\begin{itemize}
+\item
+We observe that by having the storage actively perform 
+computation, we can circumvent the known $O(\log n \log\log n)$ 
+lower bounds on passive ORAM.
+Particularly, we propose an \name scheme
+that achieve $O(\log n)$
+bandwidth overhead for reasonably large block sizes.
+Particularly, our construction relies on the verifiable-only
+VC-RAM scheme to ensure security against a 
+malicious storage provider.
+\item
+While the active ORAM model have been implicitly considered
+in several recent papers, 
+we observe a full-fledged 
+security definition in this setting has not been formally formulated,
+especially when the storage can potentially be malicious.
+Our security definitions for VC-RAM immediately gives
+rise to a full-fledged security definition for \name,
+since \name may be considered as a special case of VC-RAM,
+where the RAM program simply reads or writes data.
+\end{itemize}
+}
+\ignore{Essentially, these lower bounds do not apply in the model where 
+the server can perform computation.
+To distinguish from previous ORAM schemes which assume a passive server,
+we call our construction \name. 
+}
+
+%An \name scheme is basically an 
+%ORAM scheme
+%except that the server now can perform active computation.
+%\name can be thought of as a special case of verifiable 
+%RAM computation -- since each data access can be thought
+%of as a RAM program that simply reads or writes a block.
+
+%Our verifiable RAM computation scheme immediately implies
+%a single-round \name scheme with $O(1)$ bandwidth overhead,
+%i.e., \elaine{define this metric.}
+
+\ignore{Notice that previous work has (implicitly) leveraged
+server computation to achieve single-round 
+\name with polylogarithmic bandwidth overhead\elaine{cite two papers}.
+However, they did not give a complete security formulation 
+in this model.
+}
+
+\ignore{
+\begin{table}
+\centering
+\begin{tabular}{l|c|c|c}
+\hline
+                  & storage-side computation & bandwidth overhead & model \\
+\hline
+Best known ORAM~\cite{oram13} ($\dagger$) & N/A   & $O(\log^2 n/\log\log n)$   & privately accessible\\
+\hline
+PIR & $\Omega(n)$ & $O(1)$ (*) & publicly accessible   \\
+\hline
+Our \name  &  $O(\text{poly}\log n)$  & $O(\log n)$ (*) & privately accessible\\ 
+\hline
+\end{tabular}
+\caption{{\bf Comparison between ORAM and Private Information Retrieval (PIR).}\newline
+(*): Costs are stated for reasonably large block sizes.
+PIR with $O(1)$ bandwidth overhead can be achieved using FHE 
+for reasonably large block sizes using ciphertext packing
+for FHE schemes. \elaine{cite something}\newline
+($\dagger$) We only consider ORAM schemes with $O(1)$ client private memory.
+}
+\label{tab:orampir}
+\end{table}
+}
+
+\paragraph{Intuition.} Our main idea is as follows:
+\begin{itemize}
+\item
+{\it Rely on Fully Homomorphic Encryption (FHE) to outsource
+client computation to the server} whenever possible, and henceforth
+reduce communication overhead between the client and server.
+One technicality here is that to preserve bandwidth overhead, 
+we need to use FHE ciphertext packing techniques such
+that we can encrypt each data block of size 
+$\beta$ using a $O(\beta)$-bit ciphertext, and still
+maintain the ability to perform operations on each individual bit.
+This can be achieved using techniques described in 
+recent works~\cite{BGV12,BGH13}.
+\item
+{\it Use our verifiable-only VC-RAM construction 
+(Section~\ref{sec:verifiableonly}) to enforce honest server
+behavior}\footnote{
+Although our verifiable and private VC-RAM construction implies
+a \nameshort scheme,  it does not achieve the desired bandwidth
+overhead. We need the verifiable-only VC-RAM scheme here because
+it is cheaper than our verifiable and private VC-RAM scheme.
+}.
+\item
+{\it Balance reads and writes to achieve better bandwidth overhead.}
+If we apply the above FHE and VC-RAM idea 
+to the ORAM construction by Goodrich and Mitzenmacher~\cite{oram09}, 
+we can easily obtain a \nameshort scheme with 
+$O(\log n)$ overhead. 
+%Achieving $O(\log n/\log \log n)$ overhead
+%is more tricky, and requires the balancing trick 
+%proposed by Kushilevitz, Lu, and Ostrovsky~\cite{oram03}.
+
+To achieve lower bandwidth overhead, we can use the 
+the balancing trick 
+proposed by Kushilevitz, Lu, and Ostrovsky~\cite{oram03}.
+%to balance the cost of the read and write phases.
+%The idea to make adjacent levels grow faster than a constant.
+%For simplicity, we illustrate with an example where $g(n) = 2 \log n$. 
+The idea is that for a scheme where reads and   
+writes are not of equal cost, 
+we can balance their cost to 
+achieve better asymptotic bandwidth overhead.
+Interestingly, while writes are typically more expensive than reads
+in the non-FHE setting~\cite{oram09},  
+it turns out that reads are 
+more expensive (in terms of bandwidth overhead) 
+under FHE, since the writes correspond
+to shuffling operations which the server can homomorphically
+evaluate on its own.
+Therefore, by balancing reads and writes under FHE, we
+are actually unbalancing them in the traditional non-FHE setting.
+
+To balance reads and writes, we will adjust the rate (denoted $g(n)$)
+at which adjacent levels in the storage hierarchy 
+grows. When the next level grows faster, we get schemes with better
+bandwidth overhead -- however, at the cost of more server computation.
+\end{itemize}
+
+
+
+\paragraph{Preliminary: the GM-ORAM scheme.}
+As a starting point, consider the Oblivious RAM scheme
+by Goodrich and Mitzenmacher~\cite{oram09}.
+On a high level, their scheme~\cite{oram09} works as follows.
+The server-side storage is divided into $O(\log n)$ levels 
+denoted $B_k, B_{k+1}, \ldots B_L$, where $k$ is an appropriately
+chosen initial starting point for the hierarchy.
+Each level $B_i$ has capacity $2^i$.
+
+For technical reasons related to proving 
+inverse superpolynomial (i.e., negligible) failure
+probabilities, levels $k+1, \ldots, K$ are treated
+differently from levels $K+1, \ldots, L$, 
+where $K = O(\log \log n)$.
+
+\begin{itemize}
+\item
+$B_k$ is a table that the client scans through on every data access. 
+\item
+For a lower level $i \in \{k+1, \ldots, K\}$, 
+$B_i$ contains
+$2^{i+1}$ hash buckets, each of size $O(\log n)$.
+\item
+For an upper level $i \in \{K+1, \ldots, L\}$,
+$B_i$ is a cuckoo hash table with $(1+\epsilon)\cdot 2^{i+2}$ cells,
+and a stash of size $s = O(\log n)$.
+\end{itemize}
+
+The data access operations are sketched below. Each data access
+request has a read and a write phase.
+
+%\begin{figure}[h]
+\noindent\begin{boxedminipage}{\textwidth}
+\underline{{\bf Read phase~\cite{oram09}.}}
+\begin{itemize}
+\item
+Scan through $B_k$, if block $\blockid$ is in there, 
+$\found := $ true; else $\found := $ false.
+\item
+For each level $i \in \{k+1, \ldots, K\}$:
+if $\found = $ true, read a random hash bucket;
+else look for block $\blockid$ in hash bucket $B_i[h_i(\blockid)]$
+in level $B_i$. If found, mark $\found := $ true.
+\item
+For each level $i \in \{K+1, \ldots, L\}$:
+
+If $\found = $ true:  Read $B_i[h_{i, 0}({\sf nextdummy})]$ 
+$B_i[h_{i, 1}({\sf nextdummy})]$, and 
+let ${\sf nextdummy} \leftarrow {\sf nextdummy} + 1$.
+
+Else:   Read $B_i[h_{i, 0}(\blockid)]$ 
+$B_i[h_{i, 1}(\blockid)]$, and 
+if found, mark $\found := $ true.
+
+No matter which case: read through the stash at level $i$. 
+If found, mark $\found := $ true.
+
+\item
+For all of the above: after reading any block, the block is reencrypted 
+and written back. If the block is $\blockid$, mark
+the block as obsolete before reencryption.
+\end{itemize}
+\end{boxedminipage}
+
+\paragraph{}
+\noindent\begin{boxedminipage}{\textwidth}
+\underline{{\bf Write phase~\cite{oram09}.}}
+\begin{itemize}
+\item
+If $B_k$ is not full: write the block $\blockid$ back to level $B_k$,
+replace with updated block if necessary.
+\item
+If $B_k$ is full, find consecutively full levels
+$B_k, B_{k+1}, \ldots, B_{m}$, such that $B_{m+1}$ is the first
+empty level.
+Reshuffle levels $B_k, \ldots, B_m$ into level 
+$B_{m+1}$ -- this involves obliviously rebuilding 
+a regular hash table or 
+a cuckoo hash table at $B_{m+1}$ (see \cite{oram09} for 
+the detailed algorithm)
+New hashes are chosen every time for 
+level being rebuilt (by choosing a new secret key freshly at random).
+\end{itemize}
+\end{boxedminipage}
+%\label{fig:gm}
+%\caption{Sketch of the GM-ORAM construction~\cite{oram09}.}
+%\end{figure}
+
+\paragraph{Step 1: Applying FHE.}
+Suppose that all blocks are encrypted under FHE.
+%In each data access query, the client sends the server
+%$\overline{\blockid} \leftarrow \fhe.\enc(\blockid)$.
+We now show how to execute the read and write phases more efficiently
+by leveraging server-side FHE evaluations.
+
+\noindent\begin{boxedminipage}{\textwidth}
+\underline{{\bf Read phase under FHE.}}
+\begin{itemize}
+\item
+{\it Client}: $\found := $ false.
+$\overline{\blockid} \leftarrow \fhe.\enc(\blockid)$.
+Send $\overline{\blockid}$ to server. 
+
+\item
+{\bf Level} $k$:
+
+{\it Server}: 
+$\overline{{\sf block}} \leftarrow \fhe.\eval(\find(\overline{\blockid}, \overline{B}_k))$.
+where $\find$ is the function that looks for a block $\blockid$
+in a table, and returns the block found or $\bot$ upon failure.
+Send $\overline{{\sf block}}$ to client.
+
+{\it Client}: 
+Decrypt $\overline{{\sf block}}$ and update $\found$ appropriately. 
+
+
+\item
+{\bf For each level $i \in \{k+1, \ldots, K\}$}:
+
+{\it Client}: if $\found = $ true, choose $a$ at random;
+else choose $a \leftarrow h_i(\blockid)$.
+Send $a$ to server. 
+
+{\it Server:} 
+$\overline{{\sf block}} \leftarrow \fhe.\eval(\find(\overline{\blockid}, \overline{B}_i[a]))$.
+Send $\overline{{\sf block}}$ to client.
+
+{\it Client}: 
+Decrypt $\overline{{\sf block}}$ and update $\found$ appropriately. 
+
+\item
+{\bf For each level $i \in \{K+1, \ldots, L\}$}:
+
+{\it Client}: if $\found = $ true, choose $a_0, a_1$ at random;
+else choose $a_0 \leftarrow h_{i,0}(\blockid)$,
+$a_1 \leftarrow h_{i,1}(\blockid)$.
+Send $a_0, a_1$ to server. 
+
+{\it Server:} 
+$\overline{{\sf block}} 
+\leftarrow \fhe.\eval(\find(\overline{\blockid}, \overline{B}_i[a_0], 
+\overline{B}_i[a_1], 
+\overline{B}_i[\text{stash}_i]))$.
+Send $\overline{{\sf block}}$ to client.
+
+{\it Client}: 
+Decrypt $\overline{{\sf block}}$ and update $\found$ appropriately. 
+\end{itemize}
+\end{boxedminipage}
+\paragraph{}
+
+\noindent\begin{boxedminipage}{\textwidth}
+\underline{{\bf Write phase under FHE.}}
+\begin{itemize}
+\item
+{\it Client}: 
+$\overline{{\sf block}} \leftarrow \fhe.\enc(\blockid, {\sf data})$.
+Choose one more more fresh random hash keys.
+$\overline{{\sf keys}} \leftarrow \fhe.\enc({\sf keys})$.
+Send $\overline{{\sf block}}, \overline{{\sf keys}}$ to server. 
+\item
+{\it Server:}
+If $B_k$ is not full (the server can know this by keeping
+a counter of total data requests):
+$\overline{B}_k \leftarrow 
+\fhe.\eval({\sf insert}(\overline{B}_k, \overline{{\sf block}}))$
+where ${\sf insert}$ is the function that
+inserts a block into a table. 
+
+If $B_k$ is full, find consecutively full levels
+$B_k, B_{k+1}, \ldots, B_{m}$ (the server knows this by keeping
+a counter of total data requests), such that $B_{m+1}$ is the first
+empty level.
+Homomorphically evaluate 
+$\overline{B}_k, \ldots, \overline{B}_{m+1} \leftarrow 
+\fhe.\eval({\sf reshuffle}(\overline{{\sf keys}}, \overline{B}_k, \ldots, \overline{B}_m))$ 
+where ${\sf reshuffle}$
+is the function that 
+empties levels $B_k$ through $B_m$, and reshuffles them into level
+$B_{m+1}$ -- suppressing obsolete blocks in the meanwhile.
+\end{itemize}
+\end{boxedminipage}
+
+\paragraph{}
+Using the above FHE idea, the read phase requires sending a single
+FHE-encrypted block at every level, introducing $O(\log n)$ bandwidth
+overhead, and $O(\log n)$ rounds of interaction.
+The write phase requires no communication -- other than the client
+sending to the server the FHE-encrypted new block and the necessary
+FHE-encrypted hash keys. Basically, the server
+is capable of performing reshuffling operations 
+under FHE on its own.
+The server has $O(\log^2 n) \poly(\lambda)$  
+amortized computation overhead per data access 
+in this scheme.
+
+
+
+\paragraph{Step 2: Applying verifiable-only VC-RAM to enforce
+honest server behavior.}
+The above gives us 
+an $O(\log n)$ overhead \nameshort scheme assuming a semi-honest server. 
+However, the server may be malicious, and may not perform
+the prescribed shuffling and homormorphic evaluations honestly. 
+
+To address this problem, we can 
+apply our verifiable-only VC-RAM
+scheme. Observe that all the homomorphic evaluations
+the server performs can be modelled as RAM computation. 
+During the setup phase, the client will upload the 
+FHE-encrypted and initially shuffled data blocks to the server,
+and retain a digest of this initial storage snapshot.
+Later in the online phase, the server can always 
+use the verifiable-only VC-RAM 
+to prove to the client that it has performed the prescribed
+computation correctly, i.e.,  
+1) the claimed result returned to the client is correct; and 
+2) the claimed
+new digest of the updated storage snapshot is correct.
+
+
+
+\paragraph{Step 3: Balance reads and writes.}
+In the above scheme, the read phase requires $O(\log n)$
+overhead, while 
+the write phase requires constant overhead. 
+To balance reads and writes, 
+we can make the next level grow faster than a constant
+rate than the previous level -- however, while this reduces
+bandwidth overhead, the tradeoff is server computation.
+
+As an example, consider $g(n) = 2\log n$, i.e., we make level $B_{i+1}$ 
+larger than level $B_i$ by $2 \log n$ times.
+In this way, we have $O(\log n/\log \log n)$ levels.
+Every time $B_k, \ldots, B_i$ are consecutively full, 
+they will be shuffled into a subsequent non-full level 
+$B_{i+1}$. Starting from an empty $B_{i+1}$, 
+levels $B_k, \ldots, B_i$
+will be shuffled into $B_{i+1}$  a total of 
+$\log n$ times -- at which point $B_{i+1}$ is deemed full as well.
+Every time $B_k, \ldots, B_i$ are shuffled into $B_{i+1}$, all existing
+blocks inside level $B_k, \ldots, B_i$ and 
+$B_{i+1}$ are shuffled together,
+and written back to $B_{i+1}$.
+%(note that this is different from 
+%the scheme by Kushilevitz, Lu, and Ostrosky~\cite{oram03}).
+
+It is easy to adjust the parameter $K$ (separating the lower
+and upper levels)
+correspondingly
+such that the same failure probability analysis holds
+as in the GM-ORAM scheme~\cite{oram09}.
+
+
+It is not hard to see that with this new rebalanced scheme, 
+the read phase now requires only $O(\log n /\log \log n)$
+bandwidth overhead, while write phase requires constant 
+bandwidth overhead.
+The server has $O(\log^3 n)\poly(\lambda)$  
+amortized computation overhead per data access 
+in this rebalanced scheme.
+It is also not hard to apply a similar deamortization
+trick described in \cite{oram02} and \cite{oram03}, to spread
+out the reshuffling work over time, such
+that the server computation 
+is $O(\log^3 n)$ per data access in the worst-case.
+Note that our rebalancing is in the opposite direction
+of the Kushilevitz, Lu, and Ostrovsky scheme~\cite{oram03}.
+In the FHE setting, reads are more expensive; while
+in the standard ORAM setting they consider, writes are more expensive.
+
+
+
+More generally, we can set $g(n)$ to be other functions
+as shown in the table in Theorem~\ref{thm:vos}.
+For example, when $g(n) = \sqrt{n}$, 
+the bandwidth overhead is $O(1)$ -- however,
+server computation is $O(\sqrt{n} \log n)\poly(\lambda)$ per data access.
+The scheme for $g(n) = \sqrt{n}$ is actually a 
+variant of the Square-Root construction~\cite{oram00} -- 
+with an adjusted hashing strategy to achieve 
+inverse superpolynomial failure probability.
+
+
+\ignore{
+It is also interesting to compare \name 
+with Private Information Retrieval (PIR) -- 
+both can be used to securely fetch data 
+from an untrusted cloud provider without leaking access patterns.
+See Table~\ref{tab:orampir}.
+
+\elaine{elaborate here.}
+
+\paragraph{Active ORAM Construction.}
+
+Consider the verifiable-only VC-RAM construction of~\ref{sec:nopriv-constr}, which allows the client to outsource the computation of some RAM program $\Pi$. The main idea of Active ORAM is to define the VC-RAM's $\Pi$ as a particular sequence (given in the sequel) of read/writes performed by the ORAM client in a typical ORAM scheme. We will also use fully homomorphic encryption to allow the server to perform each such sequence in one large block. For concreteness, we instantiate our Active ORAM using the Tree-based ORAM scheme of~\cite{SCSL11}.
+
+Recall that in~\cite{SCSL11}, the ORAM is recursively defined as a sequence of $O(\log_c n)$ balanced binary trees, each of height $O(\log n)$, where each node of the tree is a trivial (``bucket'') ORAM of size $O(\log n)$. To perform one read/write of the original RAM program, the client reads/writes to every bucket ORAM along a single root-to-leaf path, for each tree of the recursive construction. We assume each block in the ORAM is encrypted ``on top'' by a layer of FHE.
+
+Consider the sequence of reads/writes along \emph{one} of the $O(\log n)$ paths involved in one ORAM query. First, we construct a circuit for homomorphic evaluation with $O(\log^3 n)$ input wires, corresponding to each bit of the $O(\log^2 n)$ blocks in the given path, that computes ``one path's worth'' of a single ORAM query. We describe the topology of the desired circuit in terms of blocks:\newline
+
+Given a target block (encrypted under FHE) denoted $u$,
+\begin{enumerate}
+\item for each of the $O(\log^2 n)$ blocks $u_i$ on the input level of the circuit, $sim_i := \overline{u}\oplus u_i$,
+\item for all $i, j, sim_i[j] := \bigwedge_j sim_i[j],$
+\item $out := \sum_i sim_i\cdot data_{u_i}$ (Here, the server sends $out$ to the client); and finally,
+\item for all $i$, $u_i := u_i\cdot\overline{sim_i}$ and $data_{u_i} := data_{u_i}\cdot\overline{sim_i}$.
+\end{enumerate}
+
+\paragraph{Correctness and Cost Analysis.} 
+
+In the above, after Step (1), we have that for all $i, sim_i = \vec{1}$ \emph{iff} $u_i = u$. Then Step (2) takes the ``internal $AND$'' of all (block-sized) $sim_i$ strings, which gives for all $i,$ if $u_i\ne u$, then $sim_i = \vec{0}$. Therefore, the computation of $out$ in Step (3) is such that $out = data_u$, which is returned to the client as desired. The final step writes a dummy block (a block with $\vec{0}$ as label and data value) over the block whose data was returned to the client via $out$, which completes all computation on one tree of the required $O(\log_c n)$ such computations per ORAM query in the scheme of~\cite{SCSL11}.
+
+Repeating the above procedure across each of the $O(\log_c n)$ trees completes one ORAM read/write query. To bridge the gap between each such query, the client decrypts the FHE layer of $out$, uses the underlying data to prepare the target block $u'$ for the next tree in the sequence, encrypts it under FHE, and sends it to the server. Assuming a sufficiently large block size (with respect to the security parameter $\lambda$) and using standard FHE bit-packing techniques~\cite{BGV11}, there is no direct overhead due to FHE. The only bandwidth overhead comes from the $O(\log_c n)$ repetitions -- once for each of the $O(\log_c n)$ trees in the ORAM. The depth of the circuit is at most $O(\log\log n)$ and has size at most $O(\log^3 n)$, so the server performs at most $poly\log(n)$ computational work per ORAM query sequence.
+}
+
+\ignore{
+\section{Symmetric-Key Predicate Encryption for RAM Programs}
+\elaine{so it only works in the symmetric key setting. need to change
+the defn}
+\paragraph{Definitions.}
+A symmetric-key predicate encryption for RAM programs (\PE-RAM)
+scheme is a suite of (possibly randomized) algorithms:
+\begin{description}
+\item
+$(\pp, \sk) \leftarrow \algSetup(1^\lambda)$: a setup algorithm
+that outputs public parameters $\pp$ and master secret key $\msk$.
+\item
+$\sk_f \leftarrow \algKeygen(\msk, f)$: a key generation algorithm
+that outputs a key $\sk_f$, 
+allowing one to evaluate a {\it RAM program} 
+$f$ over encrypted data.
+\elaine{in this section, RAM program now means a different thing.
+ideally we should unify.}
+\item
+$C \leftarrow \enc(\msk, D)$: an encryption algorithm which 
+encrypts memory array\footnote{We separate 
+out the description of the
+RAM program $f$ from the array $D$ in this Section for convenience.}
+$D$ with the master secret key $\msk$,
+and outputs ciphertext $C$.
+\item
+$y \leftarrow \dec(\sk_f, C)$:
+a decryption algorithm that on key $\sk_f$ (corresponding to RAM program 
+$f$)
+and ciphertext $C$, outputs answer $y$, where 
+$y:=f(D)$ in a correct $\PE$-RAM scheme.
+\end{description}
+
+%Correctness and security definitions for $\sFE$-RAM are exactly
+%the same as the its circuit counterpart as in Section~\ref{sec:prelim}.
+\elaine{define correctness and security.}
+
+\paragraph{Construction.}
+There are only two key differences between 
+VC-RAM and $\PE$-RAM:
+
+First, in VC-RAM, there is conceptually a single encrypted 
+data array $D$.
+However, in $\PE$-RAM, we can create  
+multiple ciphertexts  
+for multiple $D$'s, and a secret key 
+for a RAM program $f$ should work on any such ciphertext.
+
+Second, in VC-RAM, the server computes an encoded answer 
+at the end of the RAM execution, and sends it back for the client
+to decode.
+In $\PE$-RAM, clear-text output $f(D)$ needs to be revealed at the
+end of the RAM execution -- and nothing additional 
+should be revealed.
+
+In light of these differences, we can modify our VC-RAM scheme
+to achieve a private-index functional encryption scheme for RAM programs
+as below:
+
+\begin{description}
+\item
+$\algSetup(1^\lambda)$:
+Let $\sFE$ denote a private-index functional encryption scheme 
+for circuits.
+Run $(\fmpk, \fmsk) \leftarrow \sFE.\algSetup(1^\lambda)$.
+
+The resulting master secret key $\msk := (\fmpk, \fmsk)$. The public parameters $\pp:=\overline{C}$.
+\item
+$\algKeygen(\msk, f)$:
+%Run $\sFE.\enc(\fmpk, f)$.
+garble f as part of memory.
+\item
+$\enc(\msk, D)$:
+garble memory under some nonce tag, and also 
+[Run $\overline{C} \leftarrow \sFE.\algKeygen(\fmsk, \algProbgen(nonce, \cdot))$]
+\elaine{explain that Probgen is for this specific D, and any f} 
+\end{description}
+
+}
+
+\ignore{
+\subsection{Secret-key verifiable searchable encryption with access privacy and prover efficiency}
+
+[for query families that can be completed in sublinear time 
+with appropriate indexing scheme, our scheme 
+achieves sublinear server computation time, i.e., server computation
+grows sublinearly in the number of encrypted documents]
+
+\subsection{Authenticated data structures with privacy for arbitrary RAM computation}
+}

@@ -1,0 +1,330 @@
+\begin{thebibliography}{10}
+
+\bibitem{DBLP:conf/icalp/ApplebaumIK10}
+B.~Applebaum, Y.~Ishai, and E.~Kushilevitz.
+\newblock From secrecy to soundness: Efficient verification via secure
+  computation.
+\newblock In {\em International Colloquium on Automata, Languages and
+  Programming (ICALP)}, pages 152--163. Springer, 2010.
+
+\bibitem{ALM98}
+S.~Arora, C.~Lund, R.~Motwani, M.~Sudan, and M.~Szegedy.
+\newblock Proof verification and the hardness of approximation problems.
+\newblock {\em J. ACM}, 45(3):501--555, May 1998.
+
+\bibitem{pcp}
+S.~Arora and S.~Safra.
+\newblock Probabilistic checking of proofs: a new characterization of np.
+\newblock {\em J. ACM}, 45(1):70--122, Jan. 1998.
+
+\bibitem{BFLS91}
+L.~Babai, L.~Fortnow, L.~A. Levin, and M.~Szegedy.
+\newblock Checking computations in polylogarithmic time.
+\newblock In {\em Proceedings of the twenty-third annual ACM symposium on
+  Theory of computing}, STOC '91, pages 21--32, New York, NY, USA, 1991. ACM.
+
+\bibitem{oramlower}
+P.~Beame and W.~Machmouchi.
+\newblock Making branching programs oblivious requires superlogarithmic
+  overhead.
+\newblock In {\em Proceedings of the 2011 IEEE 26th Annual Conference on
+  Computational Complexity}, CCC '11, pages 12--22, Washington, DC, USA, 2011.
+  IEEE Computer Society.
+
+\bibitem{RAMtocircuit}
+E.~Ben-Sasson, A.~Chiesa, D.~Genkin, and E.~Tromer.
+\newblock Fast reductions from rams to delegatable succinct constraint
+  satisfaction problems: extended abstract.
+\newblock In {\em Proceedings of the 4th conference on Innovations in
+  Theoretical Computer Science}, ITCS '13, pages 401--414, New York, NY, USA,
+  2013. ACM.
+
+\bibitem{BCCT12}
+N.~Bitansky, R.~Canetti, A.~Chiesa, and E.~Tromer.
+\newblock From extractable collision resistance to succinct non-interactive
+  arguments of knowledge, and back again.
+\newblock In {\em ITCS}, pages 326--349, 2012.
+
+\bibitem{snarglinearproof}
+N.~Bitansky, A.~Chiesa, Y.~Ishai, R.~Ostrovsky, and O.~Paneth.
+\newblock Succinct non-interactive arguments via linear interactive proofs.
+\newblock In {\em TCC}, 2013.
+
+\bibitem{blum-memories-94}
+M.~Blum, W.~S. Evans, P.~Gemmell, S.~Kannan, and M.~Naor.
+\newblock Checking the correctness of memories.
+\newblock {\em Algorithmica}, 12(2/3):225--244, 1994.
+
+\bibitem{pkse}
+D.~Boneh, G.~D. Crescenzo, R.~Ostrovsky, and G.~Persiano.
+\newblock Public key encryption with keyword search.
+\newblock In {\em EUROCRYPT}, pages 506--522, 2004.
+
+\bibitem{BW07}
+D.~Boneh and B.~Waters.
+\newblock Conjunctive, subset, and range queries on encrypted data.
+\newblock In {\em TCC}, pages 535--554, 2007.
+
+\bibitem{BGH13}
+Z.~Brakerski, C.~Gentry, and S.~Halevi.
+\newblock Packed ciphertexts in lwe-based homomorphic encryption.
+\newblock In {\em Public Key Cryptography}, pages 1--13, 2013.
+
+\bibitem{BGV12}
+Z.~Brakerski, C.~Gentry, and V.~Vaikuntanathan.
+\newblock (leveled) fully homomorphic encryption without bootstrapping.
+\newblock In {\em Proceedings of the 3rd Innovations in Theoretical Computer
+  Science Conference}, ITCS '12, pages 309--325, New York, NY, USA, 2012. ACM.
+
+\bibitem{chung-outsource}
+K.-M. Chung, Y.~Kalai, and S.~Vadhan.
+\newblock Improved delegation of computation using fully homomorphic
+  encryption.
+\newblock In {\em CRYPTO}, 2010.
+
+\bibitem{memory-delegation}
+K.-M. Chung, Y.~T. Kalai, F.-H. Liu, and R.~Raz.
+\newblock Memory delegation.
+\newblock In {\em CRYPTO}, pages 151--168, 2011.
+
+\bibitem{DBLP:conf/ccs/CurtmolaGKO06}
+R.~Curtmola, J.~A. Garay, S.~Kamara, and R.~Ostrovsky.
+\newblock Searchable symmetric encryption: improved definitions and efficient
+  constructions.
+\newblock In {\em ACM Conference on Computer and Communications Security},
+  pages 79--88, 2006.
+
+\bibitem{DFH12}
+I.~Damg{\aa}rd, S.~Faust, and C.~Hazay.
+\newblock Secure two-party computation with low communication.
+\newblock In {\em TCC}, pages 54--74, 2012.
+
+\bibitem{dgkmns-faxd-04}
+P.~Devanbu, M.~Gertz, A.~Kwong, C.~Martel, G.~Nuckolls, and S.~Stubblebine.
+\newblock Flexible authentication of {XML} documents.
+\newblock {\em Journal of Computer Security}, 6:841--864, 2004.
+
+\bibitem{FGL96}
+U.~Feige, S.~Goldwasser, L.~Lov\'{a}sz, S.~Safra, and M.~Szegedy.
+\newblock Interactive proofs and the hardness of approximating cliques.
+\newblock {\em J. ACM}, 43(2):268--292, Mar. 1996.
+
+\bibitem{ggp}
+R.~Gennaro, C.~Gentry, and B.~Parno.
+\newblock Non-interactive verifiable computing: Outsourcing computation to
+  untrusted workers.
+\newblock In {\em CRYPTO}, pages 465--482, 2010.
+
+\bibitem{spanprogram}
+R.~Gennaro, C.~Gentry, B.~Parno, and M.~Raykova.
+\newblock Quadratic span programs and succinct {NIZK}s without {PCP}s.
+\newblock Cryptology ePrint Archive, Report 2012/215, 2012.
+\newblock \url{http://eprint.iacr.org/}.
+
+\bibitem{fhe10}
+C.~Gentry, S.~Halevi, and N.~P. Smart.
+\newblock Fully homomorphic encryption with polylog overhead.
+\newblock In {\em EUROCRYPT}, pages 465--482, 2012.
+
+\bibitem{oram00}
+O.~Goldreich and R.~Ostrovsky.
+\newblock Software protection and simulation on oblivious {RAM}s.
+\newblock {\em J. ACM}, 1996.
+
+\bibitem{GKPVZ12}
+S.~Goldwasser, Y.~Kalai, R.~A. Popa, V.~Vaikuntanathan, and N.~Zeldovich.
+\newblock Succinct functional encryption and applications: Reusable garbled
+  circuits and beyond.
+\newblock IACR Cryptology ePrint Archive 2012/733,
+  \url{http://eprint.iacr.org/2012/733}.
+
+\bibitem{GLR11}
+S.~Goldwasser, H.~Lin, and A.~Rubinstein.
+\newblock Delegation of computation without rejection problem from designated
+  verifier {CS}-proofs.
+\newblock {\em IACR Cryptology ePrint Archive}, 2011:456, 2011.
+
+\bibitem{oram09}
+M.~T. Goodrich and M.~Mitzenmacher.
+\newblock Privacy-preserving access of outsourced data via oblivious {RAM}
+  simulation.
+\newblock In {\em International Colloquium on Automata, Languages and
+  Programming (ICALP)}, pages 576--587, 2011.
+
+\bibitem{oram01}
+M.~T. Goodrich, M.~Mitzenmacher, O.~Ohrimenko, and R.~Tamassia.
+\newblock Privacy-preserving group data access via stateless oblivious {RAM}
+  simulation.
+\newblock In {\em ACM-SIAM Symposium on Discrete Algorithms (SODA)}, 2012.
+
+\bibitem{GoodrichTS01}
+M.~T. Goodrich, R.~Tamassia, and A.~Schwerin.
+\newblock Implementation of an authenticated dictionary with skip lists and
+  commutative hashing.
+\newblock In {\em Proc. DARPA Information Survivability Conference and
+  Exposition II (DISCEX II)}, pages 68--82, 2001.
+
+\bibitem{graph-auth}
+M.~T. Goodrich, R.~Tamassia, and N.~Triandopoulos.
+\newblock Efficient authenticated data structures for graph connectivity and
+  geometric search problems.
+\newblock {\em Algorithmica}, 60(3):505--552, 2011.
+
+\bibitem{accesspatternleak}
+M.~Islam, M.~Kuzu, and M.~Kantarcioglu.
+\newblock Access pattern disclosure on searchable encryption: Ramification,
+  attack and mitigation.
+\newblock In {\em Network and Distributed System Security Symposium (NDSS)},
+  2012.
+
+\bibitem{dynamicse}
+S.~Kamara, C.~Papamanthou, and T.~Roeder.
+\newblock Dynamic searchable symmetric encryption.
+\newblock In {\em ACM Conference on Computer and Communications Security},
+  pages 965--976, 2012.
+
+\bibitem{KSW08}
+J.~Katz, A.~Sahai, and B.~Waters.
+\newblock Predicate encryption supporting disjunctions, polynomial equations,
+  and inner products.
+\newblock In {\em EUROCRYPT}, pages 146--162, 2008.
+
+\bibitem{Kil95}
+J.~Kilian.
+\newblock Improved efficient arguments (preliminary version).
+\newblock In {\em Proceedings of the 15th Annual International Cryptology
+  Conference on Advances in Cryptology}, CRYPTO '95, pages 311--324, London,
+  UK, UK, 1995. Springer-Verlag.
+
+\bibitem{DBLP:conf/fc/KurosawaO12}
+K.~Kurosawa and Y.~Ohtaki.
+\newblock Uc-secure searchable symmetric encryption.
+\newblock In {\em Financial Cryptography}, pages 285--298, 2012.
+
+\bibitem{oram03}
+E.~Kushilevitz, S.~Lu, and R.~Ostrovsky.
+\newblock On the (in)security of hash-based oblivious {RAM} and a new balancing
+  scheme.
+\newblock In {\em ACM-SIAM Symposium on Discrete Algorithms (SODA)}, 2012.
+
+\bibitem{DBLP:conf/eurocrypt/LewkoOSTW10}
+A.~B. Lewko, T.~Okamoto, A.~Sahai, K.~Takashima, and B.~Waters.
+\newblock Fully secure functional encryption: Attribute-based encryption and
+  (hierarchical) inner product encryption.
+\newblock In {\em EUROCRYPT}, pages 62--91, 2010.
+
+\bibitem{LO12}
+S.~Lu and R.~Ostrovsky.
+\newblock How to garble ram programs.
+\newblock IACR Cryptology ePrint Archive 2012/601,
+  \url{http://eprint.iacr.org/2012/601}.
+
+\bibitem{LFKN92}
+C.~Lund, L.~Fortnow, H.~Karloff, and N.~Nisan.
+\newblock Algebraic methods for interactive proof systems.
+\newblock {\em J. ACM}, 39(4):859--868, Oct. 1992.
+
+\bibitem{DBLP:journals/algorithmica/MartelNDGKS04}
+C.~U. Martel, G.~Nuckolls, P.~T. Devanbu, M.~Gertz, A.~Kwong, and S.~G.
+  Stubblebine.
+\newblock A general model for authenticated data structures.
+\newblock {\em Algorithmica}, 39(1):21--41, 2004.
+
+\bibitem{Mic94}
+S.~Micali.
+\newblock Cs proofs (extended abstracts).
+\newblock In {\em FOCS}, pages 436--453, 1994.
+
+\bibitem{Mic00}
+S.~Micali.
+\newblock Computationally sound proofs.
+\newblock {\em SIAM J. Comput.}, 30(4):1253--1298, Oct. 2000.
+
+\bibitem{nn-crcu-98}
+M.~Naor and K.~Nissim.
+\newblock Certificate revocation and certificate update.
+\newblock In {\em Proc. 7th {USENIX} Security Symposium}, pages 217--228,
+  Berkeley, 1998.
+
+\bibitem{oram02}
+R.~Ostrovsky and V.~Shoup.
+\newblock Private information storage (extended abstract).
+\newblock In {\em ACM Symposium on Theory of Computing (STOC)}, pages 294--303,
+  1997.
+
+\bibitem{cpap-rt-07}
+C.~Papamanthou and R.~Tamassia.
+\newblock Time and space efficient algorithms for two-party authenticated data
+  structures.
+\newblock In {\em Proc. Int. Conference on Information and Communications
+  Security (ICICS)}, volume 4861 of {\em LNCS}, pages 1--15. Springer, 2007.
+
+\bibitem{ptt-aht-08}
+C.~Papamanthou, R.~Tamassia, and N.~Triandopoulos.
+\newblock Authenticated hash tables.
+\newblock In {\em Proc. ACM Conference on Computer and Communications Security
+  (CCS)}, pages 437--448. ACM, October 2008.
+
+\bibitem{ptt-oadsmf-10}
+C.~Papamanthou, R.~Tamassia, and N.~Triandopoulos.
+\newblock Optimal authenticated data structures with multilinear forms.
+\newblock In {\em Proc. Int. Conference on Pairing-Based Cryptography
+  (PAIRING)}, pages 246--264, 2010.
+
+\bibitem{sets-auth}
+C.~Papamanthou, R.~Tamassia, and N.~Triandopoulos.
+\newblock Optimal verification of operations on dynamic sets.
+\newblock In {\em CRYPTO}, pages 91--110, 2011.
+
+\bibitem{ParnoRV12}
+B.~Parno, M.~Raykova, and V.~Vaikuntanathan.
+\newblock How to delegate and verify in public: Verifiable computation from
+  attribute-based encryption.
+\newblock In {\em TCC}, pages 422--439, 2012.
+
+\bibitem{Sha92}
+A.~Shamir.
+\newblock {IP = PSPACE}.
+\newblock {\em J. ACM}, 39(4):869--877, Oct. 1992.
+
+\bibitem{symenc}
+E.~Shen, E.~Shi, and B.~Waters.
+\newblock Predicate privacy in encryption systems.
+\newblock In {\em Proceedings of the 6th Theory of Cryptography Conference on
+  Theory of Cryptography}, TCC '09, pages 457--473, Berlin, Heidelberg, 2009.
+  Springer-Verlag.
+
+\bibitem{rangequery}
+E.~Shi, J.~Bethencourt, T.-H.~H. Chan, D.~Song, and A.~Perrig.
+\newblock Multi-dimensional range query over encrypted data.
+\newblock In {\em Proceedings of the 2007 IEEE Symposium on Security and
+  Privacy}, SP '07, pages 350--364, Washington, DC, USA, 2007. IEEE Computer
+  Society.
+
+\bibitem{songsearch}
+D.~X. Song, D.~Wagner, and A.~Perrig.
+\newblock Practical techniques for searches on encrypted data.
+\newblock In {\em Proceedings of the 2000 IEEE Symposium on Security and
+  Privacy}, Washington, DC, USA, 2000. IEEE Computer Society.
+
+\bibitem{oram13}
+P.~Williams and R.~Sion.
+\newblock Single round access privacy on outsourced storage.
+\newblock In {\em CCS}, 2012.
+
+\bibitem{oram07}
+P.~Williams, R.~Sion, and B.~Carbunar.
+\newblock Building castles out of mud: practical access pattern privacy and
+  correctness on untrusted storage.
+\newblock In {\em Proceedings of the 15th ACM conference on Computer and
+  communications security}, CCS '08, pages 139--148, New York, NY, USA, 2008.
+  ACM.
+
+\bibitem{oram14}
+P.~Williams, R.~Sion, and A.~Tomescu.
+\newblock Privatefs: a parallel oblivious file system.
+\newblock In {\em Proceedings of the 2012 ACM conference on Computer and
+  communications security}, CCS '12, pages 977--988, New York, NY, USA, 2012.
+  ACM.
+
+\end{thebibliography}

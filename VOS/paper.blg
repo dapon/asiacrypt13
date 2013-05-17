@@ -1,0 +1,17 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: paper.aux
+The style file: abbrv.bst
+I couldn't open database file crypto2.bib
+---line 106 of file paper.aux
+ : \bibdata{refs,vc1,vc2,crypto,crypto2
+ :                                     }
+I'm skipping whatever remains of this command
+Database file #1: refs.bib
+Database file #2: vc1.bib
+Database file #3: vc2.bib
+Database file #4: crypto.bib
+Warning--I didn't find a database entry for "Kil92"
+Warning--I didn't find a database entry for "babai85"
+Warning--I didn't find a database entry for "GMR85"
+Warning--I didn't find a database entry for "GMR89"
+Warning--I didn't find a database entry for "FS87"
+(There was 1 error message)

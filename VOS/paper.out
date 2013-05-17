@@ -1,0 +1,15 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Our Main Results and Contributions}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Efficient Verifiable Oblivious Storage and Complete Security Definitions}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Other Applications and Implications of Our Main Result}{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{Other Related Work}{section.1}% 5
+\BOOKMARK [1][-]{section.2}{Preliminaries}{}% 6
+\BOOKMARK [2][-]{subsection.2.1}{The Random Access Machine \(RAM\) Model}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.2}{Memory Checking}{section.2}% 8
+\BOOKMARK [2][-]{subsection.2.3}{Succinct Non-Interactive Arguments of Knowledge \(SNARKs\)}{section.2}% 9
+\BOOKMARK [2][-]{subsection.2.4}{Verifiable RAM Computation}{section.2}% 10
+\BOOKMARK [2][-]{subsection.2.5}{Security Definitions: Verifiability of VC-RAM}{section.2}% 11
+\BOOKMARK [1][-]{section.3}{VC-RAM Construction}{}% 12
+\BOOKMARK [1][-]{section.4}{Verifiable Oblivious Storage}{}% 13
+\BOOKMARK [2][-]{subsection.4.1}{Complete Security Definition for VOS}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.2}{More Efficient VOS Construction}{section.4}% 15

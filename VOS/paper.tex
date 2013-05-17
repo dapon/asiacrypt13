@@ -1,0 +1,93 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{color,xspace}
+\usepackage{amssymb,amsmath,amsfonts,amsthm}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{boxedminipage}
+\usepackage{subfigure}
+\usepackage{xspace}
+\usepackage[sort]{natbib}
+\usepackage{hyperref}
+\renewcommand{\paragraph}[1]{\medskip\noindent{\bf #1}}
+
+%\newcommand{\elaine}[1]{{\color{red}{[Elaine: #1]}}}
+%\newcommand{\daniel}[1]{{\footnotesize[Daniel: #1]}}
+%\newcommand{\aish}[1]{{\footnotesize[Aishwarya: #1]}}
+%\newcommand{\jnote}[1]{{\color{blue}{[Jon: #1]}}}
+\newcommand{\elaine}[1]{}
+\newcommand{\jnote}[1]{}
+
+\input{macros}
+
+\begin{document}
+
+\title{{\bf Non-Interactive Verifiable RAM Computation}}
+%\author{{\small Anonymous Submission}}
+\date{\vspace{-6mm}}
+%\author{
+%Daniel Apon\thanks{University of Maryland. Email: \{dapon,jkatz,elaine,aish\}@cs.umd.edu}
+%\and Jonathan Katz$^*$
+%\and Charalampos Papamanthou\thanks{University of California, Berkeley. Email: cpap@cs.berkeley.edu}
+%\and Elaine Shi$^*$
+%\and Aishwarya Thiruvengadam$^*$
+%}
+
+\maketitle
+
+\begin{abstract}
+Consider a client who wishes to outsource a large database to an
+untrusted server, and subsequently would like to make queries
+and updates to the database. The client wishes to guarantee
+both privacy and verifiability.
+Most existing %non-interactive \babis{interactive too}
+verifiable computation
+fail to address this problem satisfactorily, due to the fact
+that the server's computation per query
+is linear in the size of the database.
+
+We propose non-interactive verifiable RAM computation -- since most
+real-world database queries (e.g., range queries, binary search,
+graph queries) can be implemented efficiently in the RAM model.
+We propose two constructions: one that guarantees verifiability but
+does not offer privacy; and a second one that guarantees both.
+Our constructions have near-optimal efficiency: the server's computation
+per query is not significantly more than the run-time of the
+RAM program; the client's online computation per query is independent
+of the run-time of the RAM, or the database size.
+
+We show that our VC-RAM model is powerful, and give several applications.
+Particularly, we show how to rely on verifiable-only VC-RAM
+construction to build
+\name schemes (i.e., oblivious
+RAM with active server computation)
+that consume asymptotically less bandwidth overhead
+than existing oblivious RAM schemes, while ensuring
+verifiability against an arbitrarily malicious server.
+\end{abstract}
+
+\noindent {\small {\bf Keywords}: verifiable RAM computation; verifiable oblivious storage;
+oblivious RAM
+}
+
+\input{intro}
+\input{prelim}
+\input{vcram}
+\input{vos}
+
+%\section*{Acknowledgments}
+%We thank  Bobby Bhattacharjee, Zvika Brakerski, Dov Gordon,
+%   Raluca Ada Popa, Emil Stefanov, and Vinod Vaikuntanathan for useful discussions. 
+%We also thank
+%Sergey Gorbunov, Vinod Vaikuntanathan, and Hoeteck Wee
+%for sharing an early manuscript of~\cite{GVW13} with us.
+
+\bibliographystyle{abbrv}
+\bibliography{refs,vc1,vc2,crypto,crypto2}
+
+
+%\appendix
+%\input{appendix}
+
+\end{document}
